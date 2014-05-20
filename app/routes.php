@@ -10,8 +10,10 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
+Route::get('/', array('uses' => 'BeachController@index'));
 
-Route::get('/', function()
+
+Route::get('/about', function()
 {
-	return View::make('hello');
+	return View::make('beach.about');
 });
