@@ -12,6 +12,7 @@
 */
 Route::get('/', array('uses' => 'BeachController@index'));
 
+Route::get('details/{bid?}', array( 'uses' => 'BeachController@details'));
 
 Route::get('/about', function()
 {

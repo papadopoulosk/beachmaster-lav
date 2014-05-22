@@ -12,3 +12,15 @@
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+<!-- Jquery Plugin -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+<!-- Google Maps Plugin-->
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=en"></script>
+    
+<!-- GMap3 plugin -->
+{{ HTML::script('scripts/gmap3.min.js') }}
+
+<!-- Main CSS file for custom changes -->
+{{ HTML::style('css/mainCSS.css') }}

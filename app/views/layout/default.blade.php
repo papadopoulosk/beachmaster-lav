@@ -6,17 +6,18 @@
 <body>
 @include('includes.header')
 <div class="container">
-	<div id="main" class="row">
-		<!-- main content -->
-		<div id="content" class="col-md-8">
-			@yield('content')
-		</div>
-
+        @if(Session::has('message'))
+            <p class="alert alert-warning">{{ Session::get('message') }}</p>
+        @endif
+        
+	<div id="main" class="row col-md-12">
+	<!-- main content -->
+	@yield('content')
 	</div>
 
-	<footer class="row">
-		@include('includes.footer')
-	</footer>
+	<div class="row col-md-12">
+	@include('includes.footer')
+	</div>
 
 </div>
 </body>

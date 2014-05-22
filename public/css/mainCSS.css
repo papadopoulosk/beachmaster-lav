@@ -1,0 +1,12 @@
+root { 
+    display: block;
+}
+
+#map{
+    width: 80%;
+    height: 350px;
+}
+
+div {
+    border: 0px solid red;
+}
