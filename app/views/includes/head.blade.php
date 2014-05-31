@@ -4,6 +4,9 @@
 
 <title>Beach Master</title>
 
+<!-- Jquery Plugin -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 
@@ -12,9 +15,6 @@
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-
-<!-- Jquery Plugin -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
 
 <!-- Google Maps Plugin-->
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=en"></script>

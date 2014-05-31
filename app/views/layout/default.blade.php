@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html ng-app="beachApp">
 <head>
     @include('includes.head')
 </head>
@@ -20,5 +20,12 @@
 	</div>
 
 </div>
+
+<!-- AngularJS Main file -->
+{{ HTML::script('scripts/angular.min.js') }}
+
+<!-- Angular application file -->
+{{ HTML::script('scripts/myangular.js') }}
+
 </body>
 </html>

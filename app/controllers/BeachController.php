@@ -2,7 +2,7 @@
 
 class BeachController extends BaseController {
 
-    //public $restfull = true;
+    public $restfull = true;
     protected $layout = 'layout.default';
     
     public function index() {
@@ -21,6 +21,20 @@ class BeachController extends BaseController {
             return View::make('beach.details')->with('beach', $beach);  
        }
     }
+    
+    public function beaches($bid=0){
+        
+            if ($bid!=0){
+                $beaches = beach::find($bid);        
+            } else {
+                $beaches = beach::All();
+            }
+            if (!is_null($beaches))
+                return json_encode($beaches->toArray());
+            else 
+                return Response::json('Beach not found', 404);
+    }
+
 }
 
 ?>

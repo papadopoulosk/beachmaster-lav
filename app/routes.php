@@ -18,3 +18,7 @@ Route::get('/about', function()
 {
 	return View::make('beach.about');
 });
+
+Route::group(array('prefix'=>'api/v1'),function(){
+    Route::resource('beaches','BeachController@beaches');
+});
