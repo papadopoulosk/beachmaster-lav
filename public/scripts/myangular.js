@@ -21,6 +21,7 @@ function beachController($scope, $http){
     loadBeaches();
 }
 
+
 //beachApp.controller('beachCtrl',function ($scope){
     //$http.get('http://localhost:8000/api/v1/beaches/').success(function(data, status, headers, config) {
     

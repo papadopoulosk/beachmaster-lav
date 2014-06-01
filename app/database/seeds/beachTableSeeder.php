@@ -6,10 +6,10 @@ class beachTableSeeder extends Seeder {
         DB::table('beaches')->delete();
         
         DB::table('beaches')->insert(array(
-            'name' => 'Beach 1',
+            'name' => 'Nea Potidea',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
-            'latitude' => '40.3791820111976663',
-            'longitude' => '23.772354125976562',
+            'latitude' => '40.194100',
+            'longitude' => '23.325849',
             'numReviews' => 1,
             'rate' => 1,
             'approved' => true,
@@ -20,10 +20,10 @@ class beachTableSeeder extends Seeder {
         ));
         
         DB::table('beaches')->insert(array(
-            'name' => 'Beach 2',
+            'name' => 'Nea Fokaia',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
-            'latitude' => '40.3791820111976663',
-            'longitude' => '23.772354125976562',
+            'latitude' => '40.133230',
+            'longitude' => '23.403783',
             'numReviews' => 1,
             'rate' => 3,
             'approved' => true,
@@ -34,10 +34,10 @@ class beachTableSeeder extends Seeder {
         ));
         
         DB::table('beaches')->insert(array(
-            'name' => 'Beach 3',
+            'name' => 'Polixrono',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
-            'latitude' => '40.3791820111976663',
-            'longitude' => '23.772354125976562',
+            'latitude' => '40.016586',
+            'longitude' => '23.527379',
             'numReviews' => 1,
             'rate' => 5,
             'approved' => true,
@@ -50,8 +50,8 @@ class beachTableSeeder extends Seeder {
         DB::table('beaches')->insert(array(
             'name' => 'Beach 4',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
-            'latitude' => '40.3791820111976663',
-            'longitude' => '23.772354125976562',
+            'latitude' => '40.3791850111976663',
+            'longitude' => '23.772258925976562',
             'numReviews' => 1,
             'rate' => 3,
             'approved' => true,
@@ -62,10 +62,10 @@ class beachTableSeeder extends Seeder {
         ));
         
         DB::table('beaches')->insert(array(
-            'name' => 'Beach 5',
+            'name' => 'Xanioti',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
-            'latitude' => '40.3791820111976663',
-            'longitude' => '23.772354125976562',
+            'latitude' => '40.001860',
+            'longitude' => '23.576646',
             'numReviews' => 1,
             'rate' => 6,
             'approved' => true,
@@ -76,10 +76,10 @@ class beachTableSeeder extends Seeder {
         ));
         
         DB::table('beaches')->insert(array(
-            'name' => 'Beach 6',
+            'name' => 'Peukoxori',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
-            'latitude' => '40.3791820111976663',
-            'longitude' => '23.772354125976562',
+            'latitude' => '39.989860',
+            'longitude' => '23.616085',
             'numReviews' => 1,
             'rate' => 1,
             'approved' => true,
@@ -90,10 +90,10 @@ class beachTableSeeder extends Seeder {
         ));
         
         DB::table('beaches')->insert(array(
-            'name' => 'Beach 7',
+            'name' => 'Paliouri',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
-            'latitude' => '40.3791820111976663',
-            'longitude' => '23.772354125976562',
+            'latitude' => '39.966906',
+            'longitude' => '23.676252',
             'numReviews' => 1,
             'rate' => 2,
             'approved' => true,
@@ -104,10 +104,10 @@ class beachTableSeeder extends Seeder {
         ));
         
         DB::table('beaches')->insert(array(
-            'name' => 'Beach 8',
+            'name' => 'Posidi',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
-            'latitude' => '40.3791820111976663',
-            'longitude' => '23.772354125976562',
+            'latitude' => '39.963773',
+            'longitude' => '23.381329',
             'numReviews' => 1,
             'rate' => 2,
             'approved' => true,

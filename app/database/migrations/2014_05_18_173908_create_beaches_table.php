@@ -21,8 +21,8 @@ class CreateBeachesTable extends Migration {
                 $table->integer('rate');
                 $table->boolean('approved');
                 $table->string('imagePath');
-                $table->float('latitude');
-                $table->float('longitude');
+                $table->decimal('latitude', 18, 14);
+                $table->decimal('longitude', 18, 14);
                 $table->timestamps();
             });
 	}
