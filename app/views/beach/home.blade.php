@@ -1,7 +1,7 @@
 @extends('layout.default')
 @section('content')
 <div class="row">
-    <div id="map" class="col-md-8 col-md-offset-1"></div>    
+    <div id="map" class="col-md-8 col-md-offset-1 mapCentral"></div>    
 </div>
 
 <script type="text/javascript">
@@ -90,13 +90,16 @@
     <div class="col-xs-2">
         <input type="search" id="searchFilter" class="form-control" placeholder="Search for beaches" ng-model="beachFilter">
     </div>
+    <div class="col-xs-2">
+        <a href="{{ URL::to('add') }}" class="btn btn-primary" role="button">Add new beach</a>
+    </div>
 </div>
 
 <div class="row">
 <hr>
     
     <div ng-controller="beachController">
-        <div ng-repeat='beach in beaches | filter:beachFilter' class="thumbnail col-md-4">
+        <div ng-repeat='beach in beaches | filter:beachFilter' class="col-md-4">
             <a class="pull-right" href="details/%%beach.id%%">
               <img src="http://lorempixel.com/75/75/nature/" class="media-object">
             </a>

@@ -28,24 +28,35 @@
 <div class="row">
     <h3><span class="label label-info">Comments</span></h3>
     @foreach($reviews as $key => $value)
-    <div class="thumbnail col-md-3">
-        <div class="">
-            <h4 class="media-heading"><span class="glyphicon glyphicon-search"></span>&nbsp;{{ $value['title'] }}</h4>
-            {{ $value['text'] }}
-        </div>
+    <div class="col-md-3">
+        <blockquote>
+            <p><span class="glyphicon glyphicon-search"></span>&nbsp;{{ $value['title'] }}</p>
+            <footer>{{ $value['text'] }}</footer> 
+            <footer>{{ date('m/d/y', strtotime($value['created_at']) ) }}</footer>
+        </blockquote>
     </div>
     @endforeach
 </div>
-
+<hr>
 <div class="row">
-    {{ Form::model(new review) }}
-        {{ Form::label('title','Title') }}
-        {{ Form::text ('title') }}
+    <div class="col-md-4">
+    {{ Form::open(array('method'=>'post', 'url' => 'review/add','role'=>'form')) }}
+            
+                @foreach($errors->all() as $message)
+                    <p class="alert alert-warning">{{ $message }}</p>
+                @endforeach
+            
+        <div class="form-group">
+            {{ Form::text ('title',Input::old('title'), array('class'=>'form-control','placeholder'=>'Review Title','required'=>'true')) }}
+        </div>
+        <div class="form-group">
+            {{ Form::textarea ('text',Input::old('text'), array('class'=>'form-control','placeholder'=>'Type here your review..','required'=>'true')) }}
+        </div>
+        {{ Form::hidden('beachId', $beach['id']) }}
         
-        {{ Form::label('text','Text') }}
-        {{ Form::text ('text') }}
-        {{ Form::submit('Save!') }}
+        {{ Form::submit('Submit!', array('class'=>'btn btn-success')) }}
     {{ Form::close() }}    
+    </div>
 </div>
 
 @stop

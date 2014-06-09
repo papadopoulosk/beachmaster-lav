@@ -2,8 +2,13 @@ root {
     display: block;
 }
 
-#map{
+.mapCentral{
     width: 80%;
+    height: 350px;
+}
+
+.mapSecondary {
+    width: 55%;
     height: 350px;
 }
 

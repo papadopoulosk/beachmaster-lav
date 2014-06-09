@@ -7,6 +7,9 @@ class BeachController extends BaseController {
     
     public function index() {
         $beaches = beach::All();
+        
+        //return Redirect::to('/about')->withInput();
+        
         return View::make('beach.home')->with('beaches',$beaches);
     }
     
@@ -30,8 +33,49 @@ class BeachController extends BaseController {
        }
     }
     
+    public function add(){
+        return View::make('beach.add');
+    }
+    
+    public function addBeach(){
+        
+        $beach = new beach;
+        $data = Input::all();
+        
+        //Validation Rules
+            $rules = array(
+                'name' =>'required'//,
+                //'description' =>'required',
+                //'latitude' =>'numeric|required',
+                //'longitude' =>'numeric|required',
+                //'imagePath' =>'active_url|required'
+            );
+            
+            var_dump($data);
+        $validator = Validator::make($data,$rules);
+        if($validator->passes()){
+            $beach->name = $data['name'];
+            $beach->description = $data['description']; 
+            $beach->imagePath = $data['imagePath'];
+            $beach->latitude = $data['latitude'];
+            $beach->longitude = $data['longitude'];
+            $beach->rate = 2.5;
+            $beach->votes = 0;
+            $beach->numReviews = 0;
+            
+            $beach->save();
+            
+            return Redirect::to('add')->with('message','Beach submitted for approval');
+        } else {
+            //return Redirect::to('add')->with('message','Error during processing');
+        }
+
+    }
+    
     //API call
     public function beaches($bid=0){
+            
+        
             if ($bid!=0){
                 $beaches = beach::find($bid);        
             } else {
@@ -43,9 +87,24 @@ class BeachController extends BaseController {
                 return Response::json('Beach not found', 404);
     }
     
-    public function addReview($review){
-        if(!is_null($review)){
+    public function neighbors(){
+        $lat = Input::get("lat"); 
+        $lng = Input::get("lng");
+        if (!is_null($lat) && !is_null($lng)){
+            //Ratio to estimate nearest beaches
+            $ratio = 0.002;
+            $maxRatio = 1 + $ratio;
+            $minRatio = 1 - $ratio;
+            $minlat = $lat * $minRatio;
+            $maxlat = $lat * $maxRatio;
+            $minlng = $lng * $minRatio;
+            $maxlng = $lng * $maxRatio;            
             
+            
+            $data = beach::select("name")->whereRaw('latitude > ? and `latitude` < ? and `longitude` > ? and `longitude` < ?',
+                    array($minlat,$maxlat,$minlng,$maxlng))
+                    ->get();
+            return json_encode($data->toArray());
         }
     }
 }
