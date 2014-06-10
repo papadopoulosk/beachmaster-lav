@@ -26,16 +26,36 @@
 <hr>
 
 <div class="row">
-    <h3><span class="label label-info">Comments</span></h3>
-    @foreach($reviews as $key => $value)
-    <div class="col-md-3">
-        <blockquote>
-            <p><span class="glyphicon glyphicon-search"></span>&nbsp;{{ $value['title'] }}</p>
-            <footer>{{ $value['text'] }}</footer> 
-            <footer>{{ date('m/d/y', strtotime($value['created_at']) ) }}</footer>
-        </blockquote>
+    <div class="row">
+        <div class="col-md-3">
+            <h3><span class="label label-info">Comments</span></h3>
+        </div>
+
+        <div class="col-md-3">
+            <h3>
+                <span class="label label-info">Rate</span>
+                &nbsp;
+                <a id="rateup"><span class="glyphicon glyphicon-thumbs-up"></span></a>
+                &nbsp;
+                <a id="ratedown"><span class="glyphicon glyphicon-thumbs-down"></span></a>
+            </h3>
+        </div>
+
+        <div class="col-md-3">
+            <!-- Placeholder -->
+       </div>
     </div>
-    @endforeach
+    <div class="row">
+        @foreach($reviews as $key => $value)
+        <div class="col-md-3">
+            <blockquote>
+                <p><span class="glyphicon glyphicon-search"></span>&nbsp;{{ $value['title'] }}</p>
+                <footer>{{ $value['text'] }}</footer> 
+                <footer>{{ date('m/d/y', strtotime($value['created_at']) ) }}</footer>
+            </blockquote>
+        </div>
+        @endforeach
+    </div>
 </div>
 <hr>
 <div class="row">
@@ -58,5 +78,24 @@
     {{ Form::close() }}    
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $("#rateup").click(function(){
+            data = "beachId={{ $beach['id'] }}";
+            $.ajax({
+                url: "api/v1/rateup",
+                type: "post",
+                data: data,
+                success: function(data){
+                    alert(data);
+                },
+                error:function(){
+                    alert("failure");
+                }
+            });
+        })
+    });
+</script>
 
 @stop

@@ -62,6 +62,7 @@
                         infowindow.setContent(context.data);
                         
                         $("#searchFilter").val(context.data);
+                        $("#searchFilter").trigger('input');
                       } else {
                         $(this).gmap3({
                           infowindow:{

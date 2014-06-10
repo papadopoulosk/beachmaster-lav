@@ -72,10 +72,8 @@ class BeachController extends BaseController {
 
     }
     
-    //API call
+    //API call - Asychronous functions
     public function beaches($bid=0){
-            
-        
             if ($bid!=0){
                 $beaches = beach::find($bid);        
             } else {
@@ -101,11 +99,42 @@ class BeachController extends BaseController {
             $maxlng = $lng * $maxRatio;            
             
             
-            $data = beach::select("name")->whereRaw('latitude > ? and `latitude` < ? and `longitude` > ? and `longitude` < ?',
+            $data = beach::select("name","description","imagePath")->whereRaw('latitude > ? and `latitude` < ? and `longitude` > ? and `longitude` < ?',
                     array($minlat,$maxlat,$minlng,$maxlng))
                     ->get();
             return json_encode($data->toArray());
         }
+    }
+    
+    public function rateup(){
+        return "Hello";
+        $beachId = Input::get("beachId");
+        return $beachId;
+        $beach = beach::find($beachId);
+        $newBeach = $this->rate(1, $beach);
+        $newBeach->save();
+        return $newBeach->rate;
+    }
+    
+    public function ratedown($beachId = null){
+        $beach = beach::find($beachId);
+        $newBeach = $this->rate(-1, $beach);
+        $newBeach->save();
+        return $newBeach->rate;
+    }
+    
+    private function rate($rate,$beach){
+            
+            $tempRate = $beach->rate;
+            $tempTotalRates = $beach->votes;
+            
+            $newRate = (($tempTotalRates * $tempRate) + $rate) / ($tempTotalRates +1);
+            $newTotalRates = $tempTotalRates + 1;
+            
+            $beach->rate = $newRate;
+            $beach->votes = $newTotalRates; //votes = rates at this point
+            
+            return $beach;
     }
 }
 

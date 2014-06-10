@@ -31,29 +31,8 @@
 
     <div id="map" class="col-md-4 mapSecondary"></div>    
 </div>
-
-<div class="row">
-    <div ng-controller="beachController">
-        <div ng-repeat='beach in beaches' class="col-md-4">
-            <a class="pull-right" href="details/%%beach.id%%">
-              <img src="http://lorempixel.com/75/75/nature/" class="media-object">
-            </a>
-            
-            <div class="media-body">
-              <h4 class="media-heading">%%beach.name%%</h4>
-              %%beach.description%%
-            </div>
-            <div clas="media-body">
-                <hr>
-                <span><span class="label label-success">%%beach.rate%%</span>&nbsp;Average Rate</span>
-            </div>
-            <div clas="media-body">
-                
-            <span><span class="label label-success">%%beach.votes%%</span>&nbsp;#Votes</span>
-            </div>
-            <p><a href="details/%%beach.id%%" class="" role="button">More...</a></p>
-        </div>        
-    </div>
+<hr>
+<div id="recommendation" class="row">
     
 </div>
 
@@ -74,7 +53,6 @@
                     events: {
                         click: function (map, event) {
                             $(this).gmap3(
-                               
                                {
                                    clear:{id:'tempMarker'},
                                    marker: {
@@ -86,13 +64,12 @@
                              $('#longitude').val(event.latLng.lng());
                             //Retrieve nearest beaches
                             data = "lat="+event.latLng.lat()+"&lng="+event.latLng.lng();
-                            //alert(data);
                             $.ajax({
                                 url: "api/v1/neighbors",
                                 type: "post",
                                 data: data,
                                 success: function(data){
-                                    $("#test").html(data);
+                                    $("#recommendation").html(data);
                                 },
                                 error:function(){
                                     alert("failure");

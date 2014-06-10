@@ -5,6 +5,7 @@ beachApp.config(function($interpolateProvider) {
   $interpolateProvider.endSymbol('%%');
 });
 
+
 function beachController($scope, $http){
     var loadBeaches = function(){
         $scope.beaches = [];
@@ -20,4 +21,23 @@ function beachController($scope, $http){
         });
     }
     loadBeaches();
+}
+
+function neighborbeachController($scope, $http){
+    var loadBeaches = function($data){
+        $scope.beaches = [];
+//        $.ajax({
+//            url: "api/v1/neighbors",
+//            type: "post",
+//            data: $data,
+//            success: function(data){
+//                $("#test").html(data);
+//                //$scope.beaches = data;
+//            },
+//            error:function(){
+//                alert("failure");
+//            }
+//        });
+    }
+    loadBeaches($data);
 }
