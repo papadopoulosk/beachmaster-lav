@@ -2,8 +2,29 @@
 @section('content')
 
 <div class="row">
+    <div class="panel panel-info">
+        <div class="panel-heading">Go on and give your info!</div>
+        <p>From here you can input and provide details for new beaches that you like and enjoy! All you have to do is follow the the instructions below! Go ahead!</p>
+        <ul class="">
+            <li>Locate the beach on the map!</li>
+            <ol>
+                <li>Check the recommendations below and make sure that your favorite beach is not listed already! No need to double entry everything!</li>
+                <li>If your beach is present, just visit it and rate or leave a comment!</li>
+                <li>Otherwise go on with the rest of the details!</li>
+            </ol>
+            <li>Give a name!</li>
+            <li>Type a good description with as much details as you like!</li>
+            <li>Use an image link with a picture of your favorite beach!</li>
+            <li>Submit and await for the beach to be approved!</li>
+            <li>Go on to find where to have a bath next weekend!</li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
     <div class="col-md-4">
-    {{ Form::open(array('method'=>'post', 'url' => 'add','role'=>'form')) }}
+
+        {{ Form::open(array('method'=>'post', 'url' => 'add','role'=>'form')) }}
               
         @foreach($errors->all() as $message)
             <p class="alert alert-warning">{{ $message }}</p>
@@ -16,10 +37,10 @@
             {{ Form::textarea ('description',Input::old('description'), array('class'=>'form-control','required'=>'true','placeholder'=>'Type here a brief description..')) }}
         </div>
         <div class="form-group">
-            {{ Form::text ('latitude',Input::old('latitude'), array('id'=>'latitude','class'=>'form-control','required'=>'true', 'disabled'=>'true','placeholder'=>'Geo Latitude')) }}
+            {{ Form::hidden ('latitude',Input::old('latitude'), array('id'=>'latitude','class'=>'form-control','required'=>'true','placeholder'=>'Geo Latitude')) }}
         </div>
         <div class="form-group">
-            {{ Form::text ('longitude',Input::old('longitude'), array('id'=>'longitude','class'=>'form-control','required'=>'true', 'disabled'=>'true', 'placeholder'=>'Geo Longitude')) }}
+            {{ Form::hidden ('longitude',Input::old('longitude'), array('id'=>'longitude','class'=>'form-control','required'=>'true', 'placeholder'=>'Geo Longitude')) }}
         </div>
         <div class="form-group">
             {{ Form::text ('imagePath',Input::old('imagePath'), array('class'=>'form-control','placeholder'=>'Link to an image')) }}
@@ -30,11 +51,14 @@
     </div>
 
     <div id="map" class="col-md-4 mapSecondary"></div>    
-</div>
-<hr>
-<div id="recommendation" class="row">
+    
+    <div id="recommendation" class="col-md-4">
+    
+    </div>
     
 </div>
+<hr>
+
 
 <div id="test"></div>
 <script type="text/javascript">
@@ -52,6 +76,8 @@
                     },
                     events: {
                         click: function (map, event) {
+                            $("#recommendation").html('<p class="well">Checking...  <img src="images/loading.gif"></p>');
+                            
                             $(this).gmap3(
                                {
                                    clear:{id:'tempMarker'},
@@ -60,8 +86,8 @@
                                        id:"tempMarker"
                                    }
                                });
-                             $('#latitude').val(event.latLng.lat());
-                             $('#longitude').val(event.latLng.lng());
+                            $('#latitude').val(event.latLng.lat());
+                            $('#longitude').val(event.latLng.lng());
                             //Retrieve nearest beaches
                             data = "lat="+event.latLng.lat()+"&lng="+event.latLng.lng();
                             $.ajax({
@@ -69,10 +95,24 @@
                                 type: "post",
                                 data: data,
                                 success: function(data){
-                                    $("#recommendation").html(data);
+                                    if (data!=false){
+                                        var obj = $.parseJSON(data);
+                                        $("#recommendation").html("");
+                                        $.each(obj, function(){
+                                            html = '<div class="list-group">';
+                                            html += '<a href="{{ URL::to("suggest") }}/'+this['id']+'" class="list-group-item">';
+                                            html += '<h5 class="list-group-item-heading">'+this['name']+'</h5>';
+                                            html += '<p class="list-group-item-text">'+this['description']+'</p>';
+                                            html += '</a>';
+                                            html += '</div>';
+                                            $("#recommendation").append(html);
+                                        });
+                                    } else {
+                                        $("#recommendation").html('<p id="beachResults" class="alert alert-warning alert-dismissable">  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>No results available</p>');
+                                    }
                                 },
                                 error:function(){
-                                    alert("failure");
+                                    $("#recommendation").html('<p id="beachResults" class="alert alert-warning alert-dismissable">  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>No results available</p>');
                                 }
                             });
                         }

@@ -7,21 +7,10 @@ class BeachController extends BaseController {
     
     public function index() {
         $beaches = beach::All();
-        
         //return Redirect::to('/about')->withInput();
-        
         return View::make('beach.home')->with('beaches',$beaches);
     }
     
-    /* Examples
-    DB::table('users')
-            ->join('contacts', 'users.id', '=', 'contacts.user_id')
-            ->join('orders', 'users.id', '=', 'orders.user_id')
-            ->select('users.id', 'contacts.phone', 'orders.price')
-            ->get();
-     * 
-     * ->select(DB::raw('count(*) as user_count, status'))
-    */
     public function details($bId = 0) {
         $beach = beach::find($bId);
         $reviews = review::where('beachId', $bId)->get();
@@ -42,16 +31,15 @@ class BeachController extends BaseController {
         $beach = new beach;
         $data = Input::all();
         
-        //Validation Rules
+            //Validation Rules
             $rules = array(
-                'name' =>'required'//,
-                //'description' =>'required',
-                //'latitude' =>'numeric|required',
-                //'longitude' =>'numeric|required',
-                //'imagePath' =>'active_url|required'
+                'name' =>'required',
+                'description' =>'required',
+                'latitude' =>'required',
+                'longitude' =>'required',
+                'imagePath' =>'required'
             );
             
-            var_dump($data);
         $validator = Validator::make($data,$rules);
         if($validator->passes()){
             $beach->name = $data['name'];
@@ -59,21 +47,26 @@ class BeachController extends BaseController {
             $beach->imagePath = $data['imagePath'];
             $beach->latitude = $data['latitude'];
             $beach->longitude = $data['longitude'];
-            $beach->rate = 2.5;
+            $beach->rate = 2.5; //Default initial value
+            $beach->approved = 0;
             $beach->votes = 0;
             $beach->numReviews = 0;
-            
+            //Save new beach to the database
             $beach->save();
             
             return Redirect::to('add')->with('message','Beach submitted for approval');
         } else {
-            //return Redirect::to('add')->with('message','Error during processing');
+            //Generate error message and forward them to View
+            $errors = $validator->messages();
+            return Redirect::to('add')->withErrors($errors);
         }
 
     }
     
     //API call - Asychronous functions
     public function beaches($bid=0){
+        //Initial call of beaches for main page.
+        // Generate a JSON list for display purposes - API call through AngularJS
             if ($bid!=0){
                 $beaches = beach::find($bid);        
             } else {
@@ -86,6 +79,8 @@ class BeachController extends BaseController {
     }
     
     public function neighbors(){
+        //Generate nearest beaches
+        //Utilised during beach submittion process
         $lat = Input::get("lat"); 
         $lng = Input::get("lng");
         if (!is_null($lat) && !is_null($lng)){
@@ -99,10 +94,21 @@ class BeachController extends BaseController {
             $maxlng = $lng * $maxRatio;            
             
             
-            $data = beach::select("name","description","imagePath")->whereRaw('latitude > ? and `latitude` < ? and `longitude` > ? and `longitude` < ?',
+            $data = beach::select("id","name","description","imagePath")
+                    ->whereRaw('latitude > ? and `latitude` < ? and `longitude` > ? and `longitude` < ?',
                     array($minlat,$maxlat,$minlng,$maxlng))
                     ->get();
-            return json_encode($data->toArray());
+            
+            $count = beach::select("name")
+                    ->whereRaw('latitude > ? and `latitude` < ? and `longitude` > ? and `longitude` < ?',
+                    array($minlat,$maxlat,$minlng,$maxlng))
+                    ->count();
+            
+            if ($count > 0){
+                return json_encode($data->toArray());
+            } else {
+                return false;
+            }
         }
     }
     
@@ -124,7 +130,6 @@ class BeachController extends BaseController {
     }
     
     private function rate($rate,$beach){
-            
             $tempRate = $beach->rate;
             $tempTotalRates = $beach->votes;
             
@@ -136,6 +141,25 @@ class BeachController extends BaseController {
             
             return $beach;
     }
+    
+    public function suggest($bid = null){
+        
+        $approve_limit = 5;
+        if (!is_null($bid)){
+            //$beachId = Input::get('beachid');
+            
+            $beach = beach::find($bid);
+            $num = $beach->total_approves + 1;
+            echo $num;
+            if ($num >= $approve_limit){
+                $beach->approved = true;
+                //return "approved";
+            } else {
+                //return "pending";
+            }
+            $beach->total_approves = $num;
+            $beach->save();
+        }
+    }
 }
-
 ?>

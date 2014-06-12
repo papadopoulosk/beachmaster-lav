@@ -10,19 +10,15 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
-Route::get('/', array(
-    'uses' => 'BeachController@index'
-    ));
+Route::get('/', array('uses' => 'BeachController@index'));
 
 Route::get('details/{bid?}', array( 'uses' => 'BeachController@details'));
 
-Route::get('add',array(
-    'uses'=> 'BeachController@add'
-));
+Route::get('suggest/{bid?}', array( 'uses' => 'BeachController@suggest'));
 
-Route::post('add',array(
-    'uses'=> 'BeachController@addBeach'
-));
+Route::get('add',array('uses'=> 'BeachController@add'));
+
+Route::post('add',array('uses'=> 'BeachController@addBeach'));
 
 Route::post('review/add', array( 'uses' => 'ReviewController@add'));
 
