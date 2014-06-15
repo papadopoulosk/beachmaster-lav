@@ -13,6 +13,7 @@ class ReviewController extends BaseController {
                 'title' =>'required',
                 'text' =>'required',
                 'beachId' =>'integer|required',
+                'rate'=>'integer|required'
             );
             
             //Initiate validator
@@ -23,6 +24,7 @@ class ReviewController extends BaseController {
                 $review->beachId = $beachId;
                 $review->title = Input::get('title');
                 $review->text = Input::get('text');
+                $review->rate = Input::get('rate');
             
                 $review->save();
                 return Redirect::to('/details/'.$beachId)->with('message', "Review submitted!");  
@@ -36,6 +38,16 @@ class ReviewController extends BaseController {
                     return Redirect::to('/')->withErrors("Error during processing.");  
                 }
             }
+    }
+    
+    public function review($bId = null){
+        //$bId = Input::get('bid');
+        if (!is_null($bId)){
+            $reviews = review::where('beachId', '=',$bId)->get();
+            return json_encode($reviews->toArray());    
+        } else {
+            return "error";//Response::json('Improper parameters', 404);
+        }
     }
 }
 

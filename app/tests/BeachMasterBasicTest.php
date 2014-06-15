@@ -8,6 +8,11 @@ class BeachMasterBasicTest extends TestCase {
 		$this->assertTrue($this->client->getResponse()->isOk());
                 $this->assertViewHas("beaches");
                 
+                $response = $this->call('GET', '/');
+                // getData() returns all vars attached to the response.
+                $beaches = $response->original->getData()['beaches'];
+                $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $beaches);
+                
                 $crawler = $this->client->request('GET', '/add');
 		$this->assertTrue($this->client->getResponse()->isOk());
                 

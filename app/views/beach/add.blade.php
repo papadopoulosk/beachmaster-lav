@@ -91,7 +91,7 @@
                             //Retrieve nearest beaches
                             data = "lat="+event.latLng.lat()+"&lng="+event.latLng.lng();
                             $.ajax({
-                                url: "api/v1/neighbors",
+                                url: "/api/v1/beach/neighbors",
                                 type: "post",
                                 data: data,
                                 success: function(data){
@@ -100,7 +100,7 @@
                                         $("#recommendation").html("");
                                         $.each(obj, function(){
                                             html = '<div class="list-group">';
-                                            html += '<a href="{{ URL::to("suggest") }}/'+this['id']+'" class="list-group-item">';
+                                            html += '<a href="{{ URL::to("/api/v1/beach/suggest") }}/'+this['id']+'" class="list-group-item">';
                                             html += '<h5 class="list-group-item-heading">'+this['name']+'</h5>';
                                             html += '<p class="list-group-item-text">'+this['description']+'</p>';
                                             html += '</a>';

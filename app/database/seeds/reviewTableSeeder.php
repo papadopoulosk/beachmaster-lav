@@ -10,6 +10,7 @@ class reviewTableSeeder extends Seeder {
             'beachId' => 1,
             'title'  => 'Review #1',
             'text'   => 'Lorem Ipsum',
+            'rate' => '4',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -18,6 +19,7 @@ class reviewTableSeeder extends Seeder {
             'beachId' => 2,
             'title'  => 'Review #2',
             'text'   => 'Lorem Ipsum2',
+            'rate' => '3',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -26,6 +28,7 @@ class reviewTableSeeder extends Seeder {
             'beachId' => 3,
             'title'  => 'Review #3',
             'text'   => 'Lorem Ipsum3',
+            'rate' => '2',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -34,6 +37,7 @@ class reviewTableSeeder extends Seeder {
             'beachId' => 3,
             'title'  => 'Review #3',
             'text'   => 'Lorem Ipsum3',
+            'rate' => '4',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -42,6 +46,7 @@ class reviewTableSeeder extends Seeder {
             'beachId' => 4,
             'title'  => 'Review #4',
             'text'   => 'Lorem Ipsum4',
+            'rate' => '1',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -50,6 +55,7 @@ class reviewTableSeeder extends Seeder {
             'beachId' => 5,
             'title'  => 'Review #5',
             'text'   => 'Lorem Ipsum5',
+            'rate' => '2',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -57,6 +63,7 @@ class reviewTableSeeder extends Seeder {
         array(
             'beachId' => 6,
             'title'  => 'Review #6',
+            'rate' => '3',
             'text'   => 'Lorem Ipsum6',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
@@ -66,6 +73,7 @@ class reviewTableSeeder extends Seeder {
             'beachId' => 7,
             'title'  => 'Review #7',
             'text'   => 'Lorem Ipsum7',
+            'rate' => '4',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -74,6 +82,7 @@ class reviewTableSeeder extends Seeder {
             'beachId' => 8,
             'title'  => 'Review #8',
             'text'   => 'Lorem Ipsum8',
+            'rate' => '3',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));

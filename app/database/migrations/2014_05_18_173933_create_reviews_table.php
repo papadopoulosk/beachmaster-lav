@@ -18,6 +18,7 @@ class CreateReviewsTable extends Migration {
                $table->string('title');
                $table->integer('beachId');
                $table->text('text');
+               $table->integer('rate');
                $table->timestamps();
             });
 	}

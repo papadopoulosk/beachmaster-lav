@@ -14,7 +14,7 @@ Route::get('/', array('uses' => 'BeachController@index'));
 
 Route::get('details/{bid?}', array( 'uses' => 'BeachController@details'));
 
-Route::get('suggest/{bid?}', array( 'uses' => 'BeachController@suggest'));
+//Route::get('suggest/{bid?}', array( 'uses' => 'BeachController@suggest'));
 
 Route::get('add',array('uses'=> 'BeachController@add'));
 
@@ -30,9 +30,12 @@ Route::get('/about', array(
     }
 ));
 
-Route::group(array('prefix'=>'api/v1'),function(){
-    Route::resource('beaches','BeachController@beaches');
-    Route::resource('neighbors','BeachController@neighbors');
-    Route::resource('rateup','BeachController@rateup');
-    Route::resource('ratedown','BeachController@ratedown');
+//API redirects
+Route::group(array('prefix'=>'/api/v1'),function(){
+    Route::resource('beach/all','BeachController@beaches');
+    Route::resource('review/{bid?}','ReviewController@review');
+    Route::resource('beach/neighbors','BeachController@neighbors');
+    Route::resource('beach/rateup','BeachController@rateup');
+    Route::resource('beach/ratedown','BeachController@ratedown');
+    //Route::resource('beach/suggest/{bid?}','BeachController@suggest');
 });

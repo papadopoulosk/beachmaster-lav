@@ -5,39 +5,120 @@ beachApp.config(function($interpolateProvider) {
   $interpolateProvider.endSymbol('%%');
 });
 
-
-function beachController($scope, $http){
+function beachController($scope, $http, $location){
     var loadBeaches = function(){
         $scope.beaches = [];
-        $http({method: 'GET', url: 'api/v1/beaches'}).
+        $scope.error = "";
+        $http({method: 'GET', url: 'api/v1/beach/all'}).
             success(function(data, status, headers, config) {
             // this callback will be called asynchronously
             // when the response is available
-            $scope.beaches = data;
+           $scope.beaches = data;
+            
+            var counter = 0;
+            var values = [];
+            for (var beach in data)
+                {
+                    counter++;
+                    values.push({
+                        latLng:[data[beach].latitude,data[beach].longitude],
+                        data:data[beach].name
+                    });
+                }
+             //Custom function to Initiate Gmap plugin
+            initGmap(values);
         }).error(function(data, status, headers, config) {
           // called asynchronously if an error occurs
           // or server returns response with an error status.
-          //Empty Callback
+          $scope.error = 'Something went terribly wrong. Please contact us about the issue.';
         });
     }
     loadBeaches();
 }
 
-function neighborbeachController($scope, $http){
-    var loadBeaches = function($data){
-        $scope.beaches = [];
-//        $.ajax({
-//            url: "api/v1/neighbors",
-//            type: "post",
-//            data: $data,
-//            success: function(data){
-//                $("#test").html(data);
-//                //$scope.beaches = data;
-//            },
-//            error:function(){
-//                alert("failure");
-//            }
-//        });
+function reviewController($scope, $http){
+    var loadReviews = function(beach){
+        $scope.reviews = [];
+        $scope.error = "";
+        $http({method: 'GET', url: '/api/v1/review/'+beach}).
+            success(function(data, status, headers, config) {
+            // this callback will be called asynchronously
+            // when the response is available
+            $scope.reviews = data;
+        }).error(function(data, status, headers, config) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+          error = 'Something went terribly wrong. Please contact us about the issue.';
+        });
     }
-    loadBeaches($data);
+    var url = document.URL;
+    beach = url.split('/').pop();
+    loadReviews(beach);
+}
+//Gmap plugin in Home page
+//Initiated through AngularJS call
+function initGmap(dataValues){
+    $("#map").gmap3({
+           getgeoloc:{
+                callback : function(latLng){
+                  if (latLng){
+                    $(this).gmap3({
+                      marker:{ 
+                        //latLng:latLng
+                      },
+                      map:{
+                        options:{
+                          zoom: 8
+                        }
+                      }
+                    });
+                  }
+                }
+              },
+           options:{
+                zoom: 8
+           },
+           events:{
+            rightclick: function(){
+              //console.log('Click event fired');
+            }
+           },
+          
+           //Start of marker section
+            marker:{
+               values:dataValues,
+               options:{
+                 draggable: false
+               },
+               
+               events:{
+                    click: function(marker, event, context){
+                      var name="";  
+                      var map = $(this).gmap3("get"),
+                        infowindow = $(this).gmap3({get:{name:"infowindow"}});
+                      if (infowindow){
+                        infowindow.open(map, marker);
+                        infowindow.setContent(context.data);
+                        
+                        $("#searchFilter").val(context.data);
+                        $("#searchFilter").trigger('input');
+                      } else {
+                        $(this).gmap3({
+                          infowindow:{
+                            anchor:marker, 
+                            options:{content: context.data}
+                          }
+                        });
+                      }
+                    },
+                    mouseout: function(){
+                      var infowindow = $(this).gmap3({get:{name:"infowindow"}});
+                      if (infowindow){
+                        infowindow.close();
+                      }
+                    }
+                  }
+            }            
+            //End of marker section
+          });
 }
