@@ -18,21 +18,25 @@ class municipalityTableSeeder extends Seeder{
         $geo = DB::table('municipalities');
         
         $geo->insert(array(
+            'id'=>1,
             'prefecture'=>'Halkidiki',
             'municipality'=>'Kassandra'
         ));
         
        $geo->insert(array(
+           'id'=>2,
             'prefecture'=>'Halkidiki',
             'municipality'=>'Nea Propontida'
         ));
        
        $geo->insert(array(
+           'id'=>3,
             'prefecture'=>'Halkidiki',
             'municipality'=>'Aristotelis'
         ));
                
        $geo->insert(array(
+           'id'=>4,
             'prefecture'=>'Nea Ionia',
             'municipality'=>'Nea Ionia'
         ));
