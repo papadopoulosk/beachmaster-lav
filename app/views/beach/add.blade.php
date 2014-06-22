@@ -24,7 +24,7 @@
 <div class="row">
     <div class="col-md-4">
 
-        {{ Form::open(array('method'=>'post', 'url' => 'add','role'=>'form')) }}
+        {{ Form::open(array('method'=>'post', 'url' => '/beach','role'=>'form')) }}
               
         @foreach($errors->all() as $message)
             <p class="alert alert-warning">{{ $message }}</p>
@@ -43,6 +43,13 @@
             {{ Form::hidden ('longitude',Input::old('longitude'), array('id'=>'longitude','class'=>'form-control','required'=>'true', 'placeholder'=>'Geo Longitude')) }}
         </div>
         <div class="form-group">
+            {{ Form::text ('prefecture',Input::old('prefecture'), array('id'=>'prefecture','class'=>'form-control','required'=>'true')) }}
+        </div>
+        <div class="form-group">
+            {{ Form::text ('municipality',Input::old('municipality'), array('id'=>'municipality','class'=>'form-control','required'=>'true')) }}
+        </div>
+        
+        <div class="form-group">
             {{ Form::text ('imagePath',Input::old('imagePath'), array('class'=>'form-control','placeholder'=>'Link to an image')) }}
         </div>
 
@@ -53,7 +60,7 @@
     <div id="map" class="col-md-4 mapSecondary"></div>    
     
     <div id="recommendation" class="col-md-4">
-    
+        <p class="well well-lg">Click on the map to see if your beach already exists!</p>
     </div>
     
 </div>
@@ -76,19 +83,31 @@
                     },
                     events: {
                         click: function (map, event) {
-                            $("#recommendation").html('<p class="well">Checking...  <img src="images/loading.gif"></p>');
-                            
+                            $("#recommendation").html('<p class="well">Checking...  <img src="/images/loading.gif"></p>');
                             $(this).gmap3(
                                {
                                    clear:{id:'tempMarker'},
                                    marker: {
                                        latLng: event.latLng,
                                        id:"tempMarker"
-                                   }
+                                   },
+                                   getaddress:{
+                                    latLng:event.latLng,
+                                    callback:function(results){
+                                        municipality = results && results[1] ? results && results[0].address_components[2].short_name: "no address";
+                                        prefecture = results && results[1] ? results && results[0].address_components[3].short_name: "no address";
+                                        content = results && results[1] ? results && "Result "+results[0].address_components[2].short_name+" - "+results[0].address_components[3].short_name : "no address";
+                                        console.log(content);
+                                        $('#municipality').val(municipality);
+                                        $('#prefecture').val(prefecture);
+                                    }
+                                  }
                                });
                             $('#latitude').val(event.latLng.lat());
                             $('#longitude').val(event.latLng.lng());
+                            
                             //Retrieve nearest beaches
+                            
                             data = "lat="+event.latLng.lat()+"&lng="+event.latLng.lng();
                             $.ajax({
                                 url: "/api/v1/beach/neighbors",

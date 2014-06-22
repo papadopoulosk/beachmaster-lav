@@ -48,7 +48,7 @@
 <hr>
 <div class="row">
     <div class="col-md-4">
-    {{ Form::open(array('method'=>'post', 'url' => 'review/add','role'=>'form')) }}
+    {{ Form::open(array('method'=>'post', 'url' => '/review','role'=>'form')) }}
             
                 @foreach($errors->all() as $message)
                     <p class="alert alert-warning">{{ $message }}</p>

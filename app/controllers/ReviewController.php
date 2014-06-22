@@ -4,7 +4,7 @@ class ReviewController extends BaseController {
     
     public $restfull = true;
     
-    public function add(){
+    public function store(){
             $review = new review;
             $data = Input::all();
             
@@ -13,7 +13,7 @@ class ReviewController extends BaseController {
                 'title' =>'required',
                 'text' =>'required',
                 'beachId' =>'integer|required',
-                'rate'=>'integer|required'
+                'rate'=>'integer|required|in:1,2,3,4,5'
             );
             
             //Initiate validator
@@ -27,20 +27,20 @@ class ReviewController extends BaseController {
                 $review->rate = Input::get('rate');
             
                 $review->save();
-                return Redirect::to('/details/'.$beachId)->with('message', "Review submitted!");  
+                return Redirect::to('/beach/'.$beachId)->with('message', "Review submitted!");  
             } else {
                 if (Input::has('beachId') && Input::get('beachId')!=null){
                     //Collect error messages
                     $errors = $validator->messages();
                     Input::flash();
-                    return Redirect::to('/details/'.$beachId)->withErrors($errors);  
+                    return Redirect::to('/beach/'.$beachId)->withErrors($errors);  
                 } else {
                     return Redirect::to('/')->withErrors("Error during processing.");  
                 }
             }
     }
     
-    public function review($bId = null){
+    public function show($bId = null){
         //$bId = Input::get('bid');
         if (!is_null($bId)){
             $reviews = review::where('beachId', '=',$bId)->get();

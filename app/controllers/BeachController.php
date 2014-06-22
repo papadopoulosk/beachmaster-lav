@@ -6,15 +6,19 @@ class BeachController extends BaseController {
     protected $layout = 'layout.default';
     
     public function index() {
-        return View::make('beach.home');
+        
+        $municipalities = municipality::select("municipalities.id",'municipalities.prefecture','municipalities.municipality')->leftJoin('beaches','municipalities.id','=','beaches.municipality_id')->where('beaches.approved','=','1')->distinct()->get();//select('id','prefecture')->groupby('prefecture')->get();
+        
+        return View::make('beach.index')->with('municipalities',$municipalities->toArray());
     }
     
-    public function details($bId = 0) {
+    public function show($bId = 0) {
         if (is_null($bId)){
             $bId = Input::get("bid");
         }
         $beach = beach::find($bId);
         $reviews = review::where('beachId', $bId)->get();
+        
         if (is_null($beach)){
             return Redirect::to('/')->with('message', "No results returned. Please try again.");  
        } else {
@@ -22,13 +26,15 @@ class BeachController extends BaseController {
        }
     }
     
-    public function add(){
+    public function create(){
         return View::make('beach.add');
     }
     
-    public function addBeach(){
+    public function store(){
         
         $beach = new beach;
+        $municipality =  new municipality;
+        
         $data = Input::all();
         
             //Validation Rules
@@ -53,11 +59,11 @@ class BeachController extends BaseController {
             //Save new beach to the database
             $beach->save();
             
-            return Redirect::to('add')->with('message','Beach has been submitted for approval');
+            return Redirect::to('/beach/create')->with('message','Beach has been submitted for approval');
         } else {
             //Generate error message and forward them to View
             $errors = $validator->messages();
-            return Redirect::to('add')->withErrors($errors);
+            return Redirect::to('/beach/create')->withErrors($errors);
         }
 
     }
@@ -69,31 +75,46 @@ class BeachController extends BaseController {
     
     //Common error function for all invalid API calls
     private function throwError (){
-        return Response::json('Improper parameters', 404);
+        return Response::json('404 - Improper parameters', 404);
     }
     
-    public function beaches($bid=0){
+    public function beaches($area=0){
+        
         //Initial call of beaches for main page.
         //Generate a JSON list for display purposes - API call through AngularJS
-            if ($bid!=0){
-                $beaches = beach::find($bid);        
-            } else {
-                //$beaches = beach::where('approved','=','1')->get();
+           
+                if ($area!=0) 
+                    $whereClause = 'b.approved = 1 AND b.municipality_id = '.$area.' ';
+                else 
+                    $whereClause = 'b.approved = 1';
+                
                 //Custom Query for join operation
-                $beaches = DB::table(DB::raw('beaches as b, reviews as r'))
-                        //->leftjoin('b', 'b.id', '=', 'r.beachId')
+                $beaches = DB::table(DB::raw('beaches as b'))
+                        ->leftjoin('reviews as r', 'b.id', '=', 'r.beachId')
                         ->select(array('b.id','b.name','b.description','b.imagePath','b.latitude','b.longitude',
                             DB::raw('count(r.id) as review_count'),DB::raw('format(avg(r.rate),1) as avg_rate'))
                                 )
-                        ->whereRaw('b.id = r.beachId')
-                        ->whereRaw('b.approved = 1')
+                        ->whereRaw($whereClause)
                         ->groupBy('b.id')->get();
-            }
-            if (!is_null($beaches))
-              return json_encode($beaches);
-            else 
-              return $this->throwError();
+            return $beaches;
       }
+      
+    public function beach($bid=null){
+               //Custom Query for join operation
+        if (!isset($bid)) return Redirect::to('/api/v1/beach/all');
+        if (is_numeric($bid)){
+                $beach = DB::table(DB::raw('beaches as b'))
+                        ->leftjoin('reviews as r', 'b.id', '=', 'r.beachId')
+                        ->select(array('b.id','b.name','b.description','b.imagePath','b.latitude','b.longitude',
+                            DB::raw('count(r.id) as review_count'),DB::raw('format(avg(r.rate),1) as avg_rate'))
+                                )
+                        ->whereRaw('b.id = '.$bid)
+                        ->groupBy('b.id')->get('1');
+            return json_encode($beach);
+        } else {
+            return $this->throwError();
+        }
+    }
     
     public function neighbors(){
         //Generate nearest beaches
@@ -172,15 +193,16 @@ class BeachController extends BaseController {
             //$beachId = Input::get('beachid');
             $beach = beach::find($bid);
             if (!is_null($beach)){
-                $num = $beach->total_approves + 1;
+                $num = $beach->suggestions + 1;
                 if ($num >= $approve_limit){
                     $beach->approved = true;
                     //return "approved";
                 } else {
                     //return "pending";
                 }
-                $beach->total_approves = $num;
+                $beach->suggestions = $num;
                 $beach->save();
+                return Redirect::to('/')->with('message','Your suggestion has been documented and the beach will be approved soon!');
             } else {
                 return $this->throwError();
             }

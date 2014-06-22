@@ -6,15 +6,32 @@ beachApp.config(function($interpolateProvider) {
 });
 
 function beachController($scope, $http, $location){
-    var loadBeaches = function(){
+    
+    $scope.updateGeo = function(){
+       area = $scope.geoFilter;
+       $("#map").gmap3('destroy');
+       loadBeaches(area);
+       
+    };
+    
+    var loadBeaches = function(a){
+        
+        if(typeof(a)==='undefined') area = "";
+        if (area!="") {
+            url = 'api/v1/beach/all/'+area;
+        } else {
+            url = 'api/v1/beach/all';
+        }
+                
         $scope.beaches = [];
         $scope.error = "";
-        $http({method: 'GET', url: 'api/v1/beach/all'}).
+        $scope.orderAttr="";
+        
+        $http({method: 'GET', url: url}).
             success(function(data, status, headers, config) {
             // this callback will be called asynchronously
             // when the response is available
            $scope.beaches = data;
-            
             var counter = 0;
             var values = [];
             for (var beach in data)
@@ -25,6 +42,7 @@ function beachController($scope, $http, $location){
                         data:data[beach].name
                     });
                 }
+               $scope.orderAttr='name'; 
              //Custom function to Initiate Gmap plugin
             initGmap(values);
         }).error(function(data, status, headers, config) {
@@ -32,6 +50,12 @@ function beachController($scope, $http, $location){
           // or server returns response with an error status.
           $scope.error = 'Something went terribly wrong. Please contact us about the issue.';
         });
+        
+        $http({method:'GET',url:'/municipality'}).
+            success(function(data){
+                console.log(data);
+                $scope.geo = data;
+            });
     }
     loadBeaches();
 }
@@ -40,7 +64,7 @@ function reviewController($scope, $http){
     var loadReviews = function(beach){
         $scope.reviews = [];
         $scope.error = "";
-        $http({method: 'GET', url: '/api/v1/review/'+beach}).
+        $http({method: 'GET', url: '/review/'+beach}).
             success(function(data, status, headers, config) {
             // this callback will be called asynchronously
             // when the response is available
