@@ -6,23 +6,35 @@ beachApp.config(function($interpolateProvider) {
 });
 
 function beachController($scope, $http, $location){
+    var markers = [];
     
-    $scope.updateGeo = function(){
-       area = $scope.geoFilter;
-       $("#map").gmap3('destroy');
-       loadBeaches(area);
-       
+    //Update Prefecture
+    $scope.updatePrefecture = function(){
+       prefecture = $scope.prefecture;
+       $("#map").gmap3({clear:markers});
+       loadBeaches(prefecture,null);
     };
-    
-    var loadBeaches = function(a){
+
+    //Update municipality
+    $scope.updateMunicipality = function(){
+       prefecture = $scope.prefecture;
+       municipality = $scope.municipality;
+       $("#map").gmap3({clear:markers});
+       loadBeaches(prefecture,municipality);
+    };
+
+    var loadBeaches = function(prefecture,municipality){
         
-        if(typeof(a)==='undefined') area = "";
-        if (area!="") {
-            url = 'api/v1/beach/all/'+area;
-        } else {
-            url = 'api/v1/beach/all';
+        if(typeof(prefecture)==='undefined') prefecture = "";
+        if(typeof(municipality)==='undefined') municipality = "";
+        url = 'api/v1/beach/all?';
+        if (prefecture!="" && prefecture !=null) {
+            url = url + 'prefecture='+prefecture;
         }
-                
+        if(municipality!="" && municipality!=null){
+                url = url+'&municipality='+municipality;
+        }
+        console.log(url);        
         $scope.beaches = [];
         $scope.error = "";
         $scope.orderAttr="";
@@ -31,6 +43,7 @@ function beachController($scope, $http, $location){
             success(function(data, status, headers, config) {
             // this callback will be called asynchronously
             // when the response is available
+           markers = data;
            $scope.beaches = data;
             var counter = 0;
             var values = [];
@@ -51,11 +64,11 @@ function beachController($scope, $http, $location){
           $scope.error = 'Something went terribly wrong. Please contact us about the issue.';
         });
         
-        $http({method:'GET',url:'/municipality'}).
-            success(function(data){
-                console.log(data);
-                $scope.geo = data;
-            });
+//        $http({method:'GET',url:'/municipality'}).
+//            success(function(data){
+//                console.log(data);
+//                $scope.geo = data;
+//            });
     }
     loadBeaches();
 }
@@ -92,7 +105,7 @@ function initGmap(dataValues){
                       },
                       map:{
                         options:{
-                          zoom: 8
+                         // zoom: 10
                         }
                       }
                     });
@@ -100,21 +113,14 @@ function initGmap(dataValues){
                 }
               },
            options:{
-                zoom: 8
+                //zoom: 10
            },
-           events:{
-            rightclick: function(){
-              //console.log('Click event fired');
-            }
-           },
-          
            //Start of marker section
             marker:{
                values:dataValues,
                options:{
                  draggable: false
                },
-               
                events:{
                     click: function(marker, event, context){
                       var name="";  
@@ -142,7 +148,7 @@ function initGmap(dataValues){
                       }
                     }
                   }
-            }            
-            //End of marker section
+            }//End of marker section
+          ,autofit:{}
           });
 }

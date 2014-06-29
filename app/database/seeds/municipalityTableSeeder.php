@@ -19,26 +19,26 @@ class municipalityTableSeeder extends Seeder{
         
         $geo->insert(array(
             'id'=>1,
-            'prefecture'=>'Halkidiki',
-            'municipality'=>'Kassandra'
+            'prefecture_id'=> 1,
+            'name'=>'Kassandra'
         ));
         
        $geo->insert(array(
-           'id'=>2,
-            'prefecture'=>'Halkidiki',
-            'municipality'=>'Nea Propontida'
+            'id'=> 2,
+            'prefecture_id'=> 1,
+            'name'=>'Nea Propontida'
         ));
        
        $geo->insert(array(
-           'id'=>3,
-            'prefecture'=>'Halkidiki',
-            'municipality'=>'Aristotelis'
+            'id'=>3,
+            'prefecture_id'=> 1,
+            'name'=>'Aristotelis'
         ));
                
        $geo->insert(array(
-           'id'=>4,
-            'prefecture'=>'Nea Ionia',
-            'municipality'=>'Nea Ionia'
+            'id'=>4,
+            'prefecture_id' => 2,
+            'name' => 'Nea Ionia'
         ));
        
     }

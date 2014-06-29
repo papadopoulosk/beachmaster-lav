@@ -19,10 +19,19 @@
     </div>
     
     <div class="col-xs-2">
-        <select class="form-control" ng-model="geoFilter"  ng-change="updateGeo()">
-            <option value="0" SELECTED>Show All</option>
+        <select class="form-control nullable" ng-model="prefecture"  ng-change="updatePrefecture()">
+                <option value="">--Prefecture--</option>
+            @foreach ($prefectures as $prefecture)
+                <option value="{{ $prefecture['id'] }}">{{ $prefecture['name'] }}</option>
+            @endforeach
+        </select>
+    </div>
+    
+    <div class="col-xs-2">
+        <select class="form-control nullable" ng-model="municipality"  ng-change="updateMunicipality()">
+                <option value="">--Municipality--</option>
             @foreach ($municipalities as $municipality)
-                <option value="{{ $municipality['id'] }}">{{ $municipality['prefecture'] }} / {{ $municipality['municipality'] }}</option>
+                <option value="{{ $municipality['id'] }}">{{ $municipality['name'] }}</option>
             @endforeach
         </select>
     </div>
@@ -38,10 +47,10 @@
     <div>
         %% error %%
         <div ng-repeat='beach in beaches | filter:beachFilter | orderBy:orderAttr' class="col-md-4">
-            <a class="pull-right" href="/beach/%%beach.id%%">
-              <img src="http://lorempixel.com/75/75/nature/" class="media-object">
+<!--            <a class="pull-right" href="/beach/%%beach.id%%">
+              <img src="%%beach.imagePath%%" class="media-object">
             </a>
-            
+            -->
             <div class="media-body">
               <h4 class="media-heading">%%beach.name%%</h4>
               %%beach.description%%

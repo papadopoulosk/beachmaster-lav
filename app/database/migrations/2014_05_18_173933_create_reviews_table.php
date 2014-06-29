@@ -17,6 +17,7 @@ class CreateReviewsTable extends Migration {
                $table->increments('id') ;
                $table->string('title');
                $table->integer('beachId');
+               //$table->foreign('beachId')->references('id')->on('beaches')->onDelete('cascade');               
                $table->text('text');
                $table->integer('rate');
                $table->timestamps();

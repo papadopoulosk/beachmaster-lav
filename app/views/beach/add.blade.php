@@ -24,7 +24,12 @@
 <div class="row">
     <div class="col-md-4">
 
-        {{ Form::open(array('method'=>'post', 'url' => '/beach','role'=>'form')) }}
+        {{ Form::open(array(
+            'method'=>'post', 
+            'url' => '/beach',
+            'role'=>'form',
+            'files'=>'true'
+         )) }}
               
         @foreach($errors->all() as $message)
             <p class="alert alert-warning">{{ $message }}</p>
@@ -37,20 +42,64 @@
             {{ Form::textarea ('description',Input::old('description'), array('class'=>'form-control','required'=>'true','placeholder'=>'Type here a brief description..')) }}
         </div>
         <div class="form-group">
+            {{ Form::label('hasBeachBar','Beachbar available') }}
+            {{ Form::radio('hasBeachBar', '1') }} Yes
+            {{ Form::radio('hasBeachBar', '0') }} No
+        </div>
+        <div class="form-group">
+            {{ Form::label('hasWifi','Wifi Access') }}
+            {{ Form::radio('hasWifi', '1') }} Yes
+            {{ Form::radio('hasWifi', '0') }} No
+        </div>
+        <div class="form-group">
+            {{ Form::label('hasShade','Natural Shade Available') }}
+            {{ Form::radio('hasShade', '1') }} Yes
+            {{ Form::radio('hasShade', '0') }} No
+        </div>
+        <div class="form-group">
+            {{ Form::label('hasRoadAccess','Accessed by road/car') }}
+            {{ Form::radio('hasRoadAccess', '1') }} Yes
+            {{ Form::radio('hasRoadAccess', '0') }} No
+        </div>
+        <div class="form-group">
+            {{ Form::label('hasSand','Sandy beach') }}
+            {{ Form::radio('hasSand', '1') }} Yes
+            {{ Form::radio('hasSand', '0') }} No
+        </div>
+        <div class="form-group">
+            {{ Form::label('hasParking','Parking Available') }}
+            {{ Form::checkbox('hasFreeParking', '1') }} Free
+            {{ Form::checkbox('hasPaidParking', '1') }} Paid
+        </div>
+        <div class="form-group">
+            {{ Form::label('hasSunbed','Sunbeds Available') }}
+            {{ Form::checkbox('hasFreeSunbed', '1') }} Free
+            {{ Form::checkbox('hasPaidSunbed', '1') }} Paid
+        </div>
+        <div class="form-group">
+            {{ Form::label('hasUmbrella','Umbrellas Available') }}
+            {{ Form::checkbox('hasFreeUmbrella', '1') }} Free
+            {{ Form::checkbox('hasPaidUmbrella', '1') }} Paid
+        </div>
+        
+        
+        
+        <div class="form-group">
             {{ Form::hidden ('latitude',Input::old('latitude'), array('id'=>'latitude','class'=>'form-control','required'=>'true','placeholder'=>'Geo Latitude')) }}
         </div>
         <div class="form-group">
             {{ Form::hidden ('longitude',Input::old('longitude'), array('id'=>'longitude','class'=>'form-control','required'=>'true', 'placeholder'=>'Geo Longitude')) }}
         </div>
         <div class="form-group">
-            {{ Form::text ('prefecture',Input::old('prefecture'), array('id'=>'prefecture','class'=>'form-control','required'=>'true')) }}
+            {{ Form::hidden ('prefecture',Input::old('prefecture'), array('id'=>'prefecture','class'=>'form-control','required'=>'true')) }}
         </div>
         <div class="form-group">
-            {{ Form::text ('municipality',Input::old('municipality'), array('id'=>'municipality','class'=>'form-control','required'=>'true')) }}
+            {{ Form::hidden ('municipality',Input::old('municipality'), array('id'=>'municipality','class'=>'form-control','required'=>'true')) }}
         </div>
         
         <div class="form-group">
-            {{ Form::text ('imagePath',Input::old('imagePath'), array('class'=>'form-control','placeholder'=>'Link to an image')) }}
+            {{ Form::file ('imagePath',Input::old('imagePath'), array('class'=>'form-control')) }}
+            <p class="help-block">Upload a picture of the beach!</p>
         </div>
 
         {{ Form::submit('Submit!', array('class'=>'btn btn-success')) }}
@@ -70,6 +119,11 @@
 <div id="test"></div>
 <script type="text/javascript">
         $(document).ready(function () {
+            addMarker();
+        });
+        
+        function addMarker(){
+            
             $("#map").gmap3({
                 map: {
                     options: {
@@ -109,7 +163,17 @@
                             //Retrieve nearest beaches
                             
                             data = "lat="+event.latLng.lat()+"&lng="+event.latLng.lng();
-                            $.ajax({
+                            SearchNeighbors(data);
+                        }
+                    }
+                }
+            });
+            
+        }
+        
+        function SearchNeighbors(data){
+        
+            $.ajax({
                                 url: "/api/v1/beach/neighbors",
                                 type: "post",
                                 data: data,
@@ -134,11 +198,9 @@
                                     $("#recommendation").html('<p id="beachResults" class="alert alert-warning alert-dismissable">  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>No results available</p>');
                                 }
                             });
-                        }
-                    }
-                }
-            });
-        });
+        }
+        
+        
     </script>
 
 @stop

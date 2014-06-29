@@ -12,6 +12,14 @@ class beach extends Eloquent {
     public function municipality(){
         return $this->hasOne("municipality","id");
     }
+    
+    public function prefecture(){
+        return $this->hasOne("prefecture","id");
+    }
+    
+    public function utility(){
+        return $this->hasOne('utility','beach_id');
+    }
 }
 
 ?>

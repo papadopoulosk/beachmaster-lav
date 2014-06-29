@@ -27,12 +27,17 @@ Route::resource('municipality','MunicipalityController');
 Route::resource('review','ReviewController',array('only' => array('store', 'show')));
 
 //API redirects
-Route::group(array('prefix'=>'/api/v1'),function(){
-    Route::get('beach/all/{area?}','BeachController@beaches');
-    Route::get('beach/{bid?}','BeachController@beach');
-    Route::get('review/{bid?}','ReviewController@review');
-    Route::post('beach/neighbors','BeachController@neighbors');
-    Route::post('beach/rateup','BeachController@rateup');
-    Route::post('beach/ratedown','BeachController@ratedown');
-    Route::any('beach/suggest/{bid?}','BeachController@suggest');
-});
+Route::group(
+        array(
+            'prefix'=>'/api/v1'
+            ),
+        function(){
+            Route::get('beach/all/{area?}','BeachController@beaches');
+            Route::get('beach/{bid?}','BeachController@beach');
+            Route::get('review/{bid?}','ReviewController@review');
+            Route::post('beach/neighbors','BeachController@neighbors');
+            Route::post('beach/rateup','BeachController@rateup');
+            Route::post('beach/ratedown','BeachController@ratedown');
+            Route::any('beach/suggest/{bid?}','BeachController@suggest');
+        }
+);

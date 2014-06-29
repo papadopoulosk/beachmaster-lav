@@ -12,8 +12,11 @@ class beachTableSeeder extends Seeder {
             'longitude' => '23.325849',
             'approved' => true,
             'suggestions' => 4,
-            'municipality_id'=>1,
-            'imagePath' => 'http://lorempixel.com/g/200/200/',
+            //Nomarxia
+            'prefecture_id' => 1,
+            //Dimos
+            'municipality_id'=> 2 ,
+            'imagePath' => '/images/uploads/default.jpg',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -26,7 +29,11 @@ class beachTableSeeder extends Seeder {
             'municipality_id'=>1,
             'approved' => true,
             'suggestions' => 7,
-            'imagePath' => 'http://lorempixel.com/g/200/200/',
+            //Nomarxia
+            'prefecture_id' => 1,
+            //Dimos
+            'municipality_id'=> 1,
+            'imagePath' => '/images/uploads/default.jpg',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -36,10 +43,13 @@ class beachTableSeeder extends Seeder {
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
             'latitude' => '40.016586',
             'longitude' => '23.527379',
-            'municipality_id'=>2,
+            //Nomarxia
+            'prefecture_id' => 1,
+            //Dimos
+            'municipality_id'=> 3,
             'approved' => true,
             'suggestions' => 5,
-            'imagePath' => 'http://lorempixel.com/g/200/200/',
+            'imagePath' => '/images/uploads/default.jpg',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -49,10 +59,13 @@ class beachTableSeeder extends Seeder {
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
             'latitude' => '40.3791850111976663',
             'longitude' => '23.772258925976562',
-            'municipality_id'=>3,
-            'approved' => false,
-            'suggestions' => 2,
-            'imagePath' => 'http://lorempixel.com/g/200/200/',
+            //Nomarxia
+            'prefecture_id' => 2,
+            //Dimos
+            'municipality_id'=> 4,
+            'approved' => true,
+            'suggestions' => 6,
+            'imagePath' => '/images/uploads/default.jpg',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -62,10 +75,13 @@ class beachTableSeeder extends Seeder {
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
             'latitude' => '40.001860',
             'longitude' => '23.576646',
-            'municipality_id'=>3,
+            //Nomarxia
+            'prefecture_id' => 1,
+            //Dimos
+            'municipality_id'=> 3,
             'approved' => false,
             'suggestions' => 4,
-            'imagePath' => 'http://lorempixel.com/g/200/200/',
+            'imagePath' => '/images/uploads/default.jpg',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -75,10 +91,13 @@ class beachTableSeeder extends Seeder {
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
             'latitude' => '39.989860',
             'longitude' => '23.616085',
-            'municipality_id'=>2,
+            //Nomarxia
+            'prefecture_id' => 1,
+            //Dimos
+            'municipality_id'=> 1,
             'approved' => true,
             'suggestions' => 8,
-            'imagePath' => 'http://lorempixel.com/g/200/200/',
+            'imagePath' => '/images/uploads/default.jpg',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -88,10 +107,13 @@ class beachTableSeeder extends Seeder {
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
             'latitude' => '39.966906',
             'longitude' => '23.676252',
-            'municipality_id'=>2,
+            //Nomarxia
+            'prefecture_id' => 1,
+            //Dimos
+            'municipality_id'=> 1,
             'approved' => true,
             'suggestions' => 5,
-            'imagePath' => 'http://lorempixel.com/g/200/200/',
+            'imagePath' => '/images/uploads/default.jpg',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
@@ -101,10 +123,13 @@ class beachTableSeeder extends Seeder {
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque fermentum erat, eu auctor velit tincidunt a. Cras mattis adipiscing.',
             'latitude' => '39.963773',
             'longitude' => '23.381329',
-            'municipality_id'=>3,
+            //Nomarxia
+            'prefecture_id' => 1,
+            //Dimos
+            'municipality_id'=> 3,
             'approved' => true,
             'suggestions' => 4,
-            'imagePath' => 'http://lorempixel.com/g/200/200/',
+            'imagePath' => '/images/uploads/default.jpg',
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
         ));
