@@ -106,9 +106,9 @@
     {{ form::close() }}
     </div>
 
-    <div id="map" class="col-md-4 mapSecondary"></div>    
+    <div id="map" class="col-md-4 col-xs-12 mapSecondary"></div>    
     
-    <div id="recommendation" class="col-md-4">
+    <div id="recommendation" class="col-md-4 col-xs-12">
         <p class="well well-lg">Click on the map to see if your beach already exists!</p>
     </div>
     

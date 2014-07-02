@@ -46,27 +46,27 @@
     
     <div>
         %% error %%
-        <div ng-repeat='beach in beaches | filter:beachFilter | orderBy:orderAttr' class="col-md-4">
-<!--            <a class="pull-right" href="/beach/%%beach.id%%">
+        <div ng-repeat='beach in beaches | filter:beachFilter | orderBy:orderAttr' class="col-md-3 col-xs-12 thumbnail">
+            <a class="col-xs-5" href="/beach/%%beach.id%%">
               <img src="%%beach.imagePath%%" class="media-object">
             </a>
-            -->
-            <div class="media-body">
-              <h4 class="media-heading">%%beach.name%%</h4>
+            
+            <div class="caption">
+              <h4 class="">%%beach.name%%</h4>
               %%beach.description%%
+              <hr>
+                <span ng-if="beach.review_count > 0" class="media-body visible-xs-inline">
+
+                    <span class="label label-success visible-xs-inline">%% beach.avg_rate %%</span><span>&nbsp; Rate</span>
+                </span>
+                <span ng-if="beach.review_count > 0" class="media-body visible-xs-inline">
+                    <span class="label label-success">%%beach.review_count%%</span><span>&nbsp;# of reviews</span>
+                </span>
+                <span ng-if="beach.review_count < 1" class="media-body visible-xs-inline">
+                    <span class="label label-success">Be the first to leave a review<br>and rate the spot! :)</span>
+                </span>
+                <a href="/beach/%%beach.id%%" class="" role="button">More...</a>
             </div>
-            <div ng-if="beach.review_count > 0" clas="media-body">
-                <hr>
-                <span><span class="label label-success">%% beach.avg_rate %%</span>&nbsp; Rate</span>
-            </div>
-            <div ng-if="beach.review_count > 0" clas="media-body">
-                <span><span class="label label-success">%%beach.review_count%%</span>&nbsp;# of reviews</span>
-            </div>
-            <div ng-if="beach.review_count < 1" clas="media-body">
-                <hr>
-                <span><span class="label label-success">Be the first to leave a review and rate the spot! :)</span>
-            </div>
-            <p><a href="/beach/%%beach.id%%" class="" role="button">More...</a></p>
         </div>        
     </div>
     <!-- End of AngularJS View -->

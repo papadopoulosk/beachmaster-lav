@@ -1,6 +1,7 @@
 <meta charset="utf-8">
-<meta name="description" content="">
-<meta name="author" content="Scotch">
+<meta name="description" content="Beach management system">
+<meta name="author" content="Konstantinos Papadopoulos">
+<meta name=viewport content="width=device-width, initial-scale=1">
 
 <title>Beach Master</title>
 

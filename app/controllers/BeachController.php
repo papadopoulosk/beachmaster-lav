@@ -28,12 +28,15 @@ class BeachController extends BaseController {
         }
         $beach = beach::find($bId);
         $reviews = review::where('beachId', $bId)->get();
-        $utility = utility::where('beach_id',$bId)->get();
+        $utility = utility::where('beach_id',1)->get();
         
         if (is_null($beach)){
             return Redirect::to('/')->with('message', "No results returned. Please try again.");  
        } else {
-           return View::make('beach.details')->with('beach', $beach->toArray())->with('reviews',$reviews->toArray());//->with('utility',$utility->toArray());  
+           return View::make('beach.details')
+                   ->with('beach', $beach->toArray())
+                   ->with('reviews',$reviews->toArray())
+                   ->with('utility',$utility->toArray());  
        }
     }
     
@@ -60,10 +63,10 @@ class BeachController extends BaseController {
             
         $validator = Validator::make($data,$rules);
         if($validator->passes()){
-            $prefecture = prefecture::firstOrCreate(array('name'=> $data['prefecture']));
+            $prefecture = prefecture::firstOrNew(array('name'=> $data['prefecture']));
             $prefecture->save();
             
-            $municipality = municipality::firstOrCreate(array('name'=>$data['municipality']));
+            $municipality = municipality::firstOrNew(array('name'=>$data['municipality']));
             $municipality->prefecture_id = $prefecture->id;
             $municipality->save();
             
@@ -105,20 +108,20 @@ class BeachController extends BaseController {
             //Save new beach to the database
             $beach->save();
             
-//            $utility = new utility;
-//            $utility->beach_id = $beach->id;
-//            $utility->hasBeachBar = $data['hasBeachBar']; 
-//            $utility->hasShade = $data['hasShade'];
-//            $utility->hasFreeParking = isset($data['hasFreeParking']) ? $data['hasFreeParking'] : 0;
-//            $utility->hasPaidParking = isset($data['hasPaidParking']) ? $data['hasPaidParking'] : 0; 
-//            $utility->hasRoadAccess = $data['hasRoadAccess'];
-//            $utility->hasWifi = $data['hasWifi'];
-//            $utility->hasSand = $data['hasSand'];
-//            $utility->hasFreeSunbed = isset($data['hasFreeSunbed']) ? $data['hasFreeSunbed'] : 0;
-//            $utility->hasPaidSunbed = isset($data['hasPaidSunbed']) ? $data['hasPaidSunbed'] : 0;
-//            $utility->hasFreeUmbrella = isset($data['hasFreeUmbrella']) ? $data['hasFreeUmbrella'] : 0;
-//            $utility->hasPaidUmbrella = isset($data['hasPaidUmbrella']) ? $data['hasPaidUmbrella'] : 0;
-//            $utility->save();
+            $utility = new utility;
+            $utility->beach_id = $beach->id;
+            $utility->hasBeachBar = isset($data['hasBeachBar']) ? $data['hasBeachBar'] : 0; 
+            $utility->hasShade = isset($data['hasShade']) ? $data['hasShade'] : 0 ;
+            $utility->hasFreeParking = isset($data['hasFreeParking']) ? $data['hasFreeParking'] : 0;
+            $utility->hasPaidParking = isset($data['hasPaidParking']) ? $data['hasPaidParking'] : 0; 
+            $utility->hasRoadAccess = isset($data['hasRoadAccess'])? $data['hasRoadAccess'] : 0;
+            $utility->hasWifi = isset($data['hasWifi']) ? $data['hasWifi'] : 0;
+            $utility->hasSand = isset($data['hasSand'])? $data['hasSand'] : 0;
+            $utility->hasFreeSunbed = isset($data['hasFreeSunbed']) ? $data['hasFreeSunbed'] : 0;
+            $utility->hasPaidSunbed = isset($data['hasPaidSunbed']) ? $data['hasPaidSunbed'] : 0;
+            $utility->hasFreeUmbrella = isset($data['hasFreeUmbrella']) ? $data['hasFreeUmbrella'] : 0;
+            $utility->hasPaidUmbrella = isset($data['hasPaidUmbrella']) ? $data['hasPaidUmbrella'] : 0;
+            $utility->save();
             
             return Redirect::to('/beach/create')->with('message','Beach has been submitted for approval');
         } else {
