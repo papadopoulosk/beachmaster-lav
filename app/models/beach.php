@@ -20,6 +20,10 @@ class beach extends Eloquent {
     public function utility(){
         return $this->hasOne('utility','beach_id');
     }
+    
+    public function images(){
+        return $this->hasMany('images','beach_id');
+    }
 }
 
 ?>

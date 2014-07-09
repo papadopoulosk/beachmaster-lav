@@ -18,13 +18,16 @@ Route::get('/', array('uses' => 'BeachController@index'));
 
 //Route::get('add',array('uses'=> 'BeachController@add'));
 
-//Route::post('add',array('uses'=> 'BeachController@addBeach'));
-
-//Route::post('review/add', array( 'uses' => 'ReviewController@add'));
+Route::get('/report/beach',array('uses'=> 'ReportController@beach'));
+Route::get('/report/review',array('uses'=> 'ReportController@review'));
+Route::get('/report/image',array('uses'=> 'ReportController@image'));
 
 Route::resource('beach','BeachController');
 Route::resource('municipality','MunicipalityController');
 Route::resource('review','ReviewController',array('only' => array('store', 'show')));
+Route::resource('image', 'ImageController',array('only' => array('store')));
+Route::resource('utilities', 'UtilityController',array('only' => array('store')));
+
 
 //API redirects
 Route::group(

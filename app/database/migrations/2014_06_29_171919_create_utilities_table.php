@@ -13,8 +13,10 @@ class CreateUtilitiesTable extends Migration {
 	public function up()
 	{
 		Schema::create('utilities',function($table){
+                    $table->engine = "InnoDB";
                     $table->increments('id');
-                    $table->integer('beach_id')->unique();
+                    $table->integer('beach_id')->unsigned()->unique();
+                    $table->foreign('beach_id')->references('id')->on('beaches');
                     $table->boolean('hasBeachbar');
                     $table->boolean('hasShade');
                     $table->boolean('hasFreeParking');

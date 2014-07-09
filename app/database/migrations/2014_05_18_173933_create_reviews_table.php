@@ -14,12 +14,14 @@ class CreateReviewsTable extends Migration {
 	{
 		//
             Schema::create('reviews', function($table){
+               $table->engine = "InnoDB";
                $table->increments('id') ;
                $table->string('title');
-               $table->integer('beachId');
-               //$table->foreign('beachId')->references('id')->on('beaches')->onDelete('cascade');               
+               $table->integer('beachId')->unsigned();
+               $table->foreign('beachId')->references('id')->on('beaches')->onDelete('cascade');
                $table->text('text');
                $table->integer('rate');
+               $table->tinyInteger('report')->default(0);
                $table->timestamps();
             });
 	}

@@ -4,6 +4,10 @@ class BeachController extends BaseController {
 
     public $restfull = true;
     protected $layout = 'layout.default';
+        
+    public function __construct() {
+        
+    }
     
     public function index() {
         
@@ -28,7 +32,11 @@ class BeachController extends BaseController {
         }
         $beach = beach::find($bId);
         $reviews = review::where('beachId', $bId)->get();
-        $utility = utility::where('beach_id',1)->get();
+        
+        $utility = new utility($bId);
+        $utility = $utility->getUtilities(); //utility::where('beach_id',1)->get();
+        
+        $images = $beach->images->toArray();
         
         if (is_null($beach)){
             return Redirect::to('/')->with('message', "No results returned. Please try again.");  
@@ -36,7 +44,8 @@ class BeachController extends BaseController {
            return View::make('beach.details')
                    ->with('beach', $beach->toArray())
                    ->with('reviews',$reviews->toArray())
-                   ->with('utility',$utility->toArray());  
+                   ->with('utility',$utility)
+                   ->with('images',$images);//->toArray());  
        }
     }
     
@@ -49,8 +58,7 @@ class BeachController extends BaseController {
         $beach = new beach;
                 
         $data = Input::all();
-        
-            //Validation Rules
+        //Validation Rules
             $rules = array(
                 'name' =>'required',
                 'description' =>'required',
@@ -64,63 +72,43 @@ class BeachController extends BaseController {
         $validator = Validator::make($data,$rules);
         if($validator->passes()){
             $prefecture = prefecture::firstOrNew(array('name'=> $data['prefecture']));
+            $prefecture->name = $data['prefecture'];
             $prefecture->save();
             
             $municipality = municipality::firstOrNew(array('name'=>$data['municipality']));
             $municipality->prefecture_id = $prefecture->id;
+            $municipality->name = $data['municipality'];
             $municipality->save();
             
             $file = $data['imagePath'];
 
-            $destinationPath = '';
-            $filename        = '';
-
-            
-            
-            if (Input::hasFile('imagePath')) {
-                $file            = Input::file('imagePath');
-                $destinationPath = '/images/uploads/';
-                $filename        = str_random(6) . '_' . $file->getClientOriginalName();
-                $uploadSuccess   = $file->move(public_path().$destinationPath, $filename);
-                
-                $img = Image::make(public_path().$destinationPath.$filename);
-                $img->fit(900, 500);
-                $img->save();
-        
-            }
-
-            if( $uploadSuccess ) {
-               echo "Success";
-            } else {
-               echo "Image error";
-            }
-            
             $beach->name = $data['name'];
             $beach->description = $data['description']; 
-            $beach->imagePath = $destinationPath.$filename;
             $beach->latitude = $data['latitude'];
             $beach->longitude = $data['longitude'];
             $beach->suggestions = 1;
             $beach->approved = 0;
             $beach->prefecture_id = $prefecture->id;
             $beach->municipality_id = $municipality->id;
-            
             //Save new beach to the database
             $beach->save();
             
-            $utility = new utility;
+            $image = new images;
+            if (Input::hasFile('imagePath')) {
+                $newImage = Input::file('imagePath');
+                $path = $image->uploadImage($newImage, $beach->id);
+                if ($path){
+                    $image->beach_id = $beach->id;
+                    $image->imagePath = $path;
+                    $image->save();
+                } else {
+                    $error = true;
+                }       
+            }
+            
+            $utility = new utility;//utility::firstOrCreate(array('beach_id'=>$beach->id)); //new utility($beach->id);
             $utility->beach_id = $beach->id;
-            $utility->hasBeachBar = isset($data['hasBeachBar']) ? $data['hasBeachBar'] : 0; 
-            $utility->hasShade = isset($data['hasShade']) ? $data['hasShade'] : 0 ;
-            $utility->hasFreeParking = isset($data['hasFreeParking']) ? $data['hasFreeParking'] : 0;
-            $utility->hasPaidParking = isset($data['hasPaidParking']) ? $data['hasPaidParking'] : 0; 
-            $utility->hasRoadAccess = isset($data['hasRoadAccess'])? $data['hasRoadAccess'] : 0;
-            $utility->hasWifi = isset($data['hasWifi']) ? $data['hasWifi'] : 0;
-            $utility->hasSand = isset($data['hasSand'])? $data['hasSand'] : 0;
-            $utility->hasFreeSunbed = isset($data['hasFreeSunbed']) ? $data['hasFreeSunbed'] : 0;
-            $utility->hasPaidSunbed = isset($data['hasPaidSunbed']) ? $data['hasPaidSunbed'] : 0;
-            $utility->hasFreeUmbrella = isset($data['hasFreeUmbrella']) ? $data['hasFreeUmbrella'] : 0;
-            $utility->hasPaidUmbrella = isset($data['hasPaidUmbrella']) ? $data['hasPaidUmbrella'] : 0;
+            $utility->checkData($data);
             $utility->save();
             
             return Redirect::to('/beach/create')->with('message','Beach has been submitted for approval');
@@ -142,8 +130,7 @@ class BeachController extends BaseController {
         return Response::json('404 - Improper parameters', 404);
     }
     
-    public function beaches($area=0){
-        
+    public function beaches(){
         //Initial call of beaches for main page.
         //Generate a JSON list for display purposes - API call through AngularJS
         
@@ -154,8 +141,8 @@ class BeachController extends BaseController {
             $queryA = ' AND b.prefecture_id = '.$prefecture.' ';
         }
         if(Input::has('municipality')){
-           $municipality = Input::get('municipality'); 
-           $queryA = ' AND b.municipality_id = '.$municipality.' ';
+            $municipality = Input::get('municipality'); 
+            $queryB = ' AND b.municipality_id = '.$municipality.' ';
         }
                 
         $whereClause = 'b.approved = 1'.$queryA.$queryB;
@@ -163,12 +150,18 @@ class BeachController extends BaseController {
         //Custom Query for join operation
         $beaches = DB::table(DB::raw('beaches as b'))
                 ->leftjoin('reviews as r', 'b.id', '=', 'r.beachId')
-                ->select(array('b.id','b.name','b.description','b.imagePath','b.latitude','b.longitude',
+                ->leftjoin('images as img', 'b.id','=','img.beach_id')
+                ->select(array('b.id','b.name','b.description','img.imagePath','b.latitude','b.longitude',
                     DB::raw('count(r.id) as review_count'),DB::raw('format(avg(r.rate),1) as avg_rate'))
                         )
                 ->whereRaw($whereClause)
                 ->groupBy('b.id')->get();
-            return $beaches;
+        if (count($beaches)<1){
+            return false;
+        } else {
+            return $beaches;            
+        }
+
       }
       
     public function beach($bid=null){

@@ -2,6 +2,38 @@ root {
     display: block;
 }
 
+body { padding-top: 60px; }
+
+.tab-content {
+    padding-top: 10px;
+}
+
+.report {
+    font-style:italic;
+    font-size:0.8em;
+}
+
+.textlink{
+//    color: black;
+}
+
+.textlink:hover {
+//    text-decoration: none;
+}
+
+.smth {
+    border: 1px solid #efefef;
+    background: #fff;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.27), 0 0 40px rgba(0, 0, 0, 0.06) inset;
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.27), 0 0 40px rgba(0, 0, 0, 0.06) inset; 
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.27), 0 0 40px rgba(0, 0, 0, 0.06) inset;
+    margin-bottom: 1%;
+}
+
+#beachContent {
+    display: none;
+}
+
 @media all and (min-width: 1024px) {
     p {
         font-family: verdana,sans-serif;
@@ -14,8 +46,9 @@ root {
     }
 
     .mapSecondary {
-        width: 33%;
+        width: 66%;
         height: 350px;
+        margin-bottom: 1%;
     }
     
     .caption{

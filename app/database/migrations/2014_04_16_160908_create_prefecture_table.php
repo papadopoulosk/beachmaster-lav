@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMunicipalityTable extends Migration {
+class CreatePrefectureTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,11 +12,10 @@ class CreateMunicipalityTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('municipalities',function($table){
+		Schema::create('prefectures',function($table){
+                   $table->engine = "InnoDB";
                    $table->increments('id');
-                   $table->string('name')->unique();
-                   $table->integer('prefecture_id');
-                   //$table->foreign('prefecture_id')->references('id')->on('prefectures')->onDelete('cascade');
+                   $table->string('name')->Unique();
                    $table->timestamps();
                 });
 	}
@@ -28,7 +27,6 @@ class CreateMunicipalityTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('municipalities');
+		Schema::drop('prefectures');
 	}
-
 }
