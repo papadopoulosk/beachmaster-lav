@@ -25,9 +25,14 @@ Route::get('/report/image',array('uses'=> 'ReportController@image'));
 Route::resource('beach','BeachController');
 Route::resource('municipality','MunicipalityController');
 Route::resource('review','ReviewController',array('only' => array('store', 'show')));
+Route::resource('contact','ContactController',array('only' => array('index', 'store')));
+Route::resource('about','aboutController',array('only' => array('index')));
 Route::resource('image', 'ImageController',array('only' => array('store')));
 Route::resource('utilities', 'UtilityController',array('only' => array('store')));
 
+Route::get('admin',function(){
+    return View::make('admin.index');
+})->before('auth.basic');
 
 //API redirects
 Route::group(
@@ -35,7 +40,7 @@ Route::group(
             'prefix'=>'/api/v1'
             ),
         function(){
-            Route::get('beach/all/{area?}','BeachController@beaches');
+            Route::get('beach/all/','BeachController@beaches');
             Route::get('beach/{bid?}','BeachController@beach');
             Route::get('review/{bid?}','ReviewController@review');
             Route::post('beach/neighbors','BeachController@neighbors');

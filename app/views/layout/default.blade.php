@@ -7,7 +7,9 @@
 @include('includes.header')
 <div class="container">
         @if(Session::has('message'))
-            <p class="alert alert-warning col-md-6">{{ Session::get('message') }}</p>
+            <div class="row-fluid col-md-12">
+                <p class="alert alert-warning col-md-6">{{ Session::get('message') }}</p>
+            </div>
         @endif
         
 	<div id="main" class="row-fluid col-md-12">

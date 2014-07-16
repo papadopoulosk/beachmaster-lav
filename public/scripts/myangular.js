@@ -67,7 +67,8 @@ function beachController($scope, $http, $location){
                $scope.orderAttr='name'; 
                  //Custom function to Initiate Gmap plugin
                 initGmap(values);
-                $('#beachContent').fadeIn('slow');
+                $('#beachContent').fadeIn('slow')
+               
             }
         }).error(function(data, status, headers, config) {
           // called asynchronously if an error occurs

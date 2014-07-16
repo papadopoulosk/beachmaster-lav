@@ -4,7 +4,6 @@
 <div class="row">
     <h2>Discover places to visit and beaches to enjoy!</h2>
 </div>
-
 <div class="row">
     <div id="map" class="col-md-8 col-md-offset-1 mapCentral"></div>    
 </div>
@@ -72,4 +71,6 @@
     <!-- End of AngularJS View -->
 </div>
 </div> <!-- End of ng-controller -->
+
+
 @stop

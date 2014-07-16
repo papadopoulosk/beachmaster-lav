@@ -7,14 +7,11 @@ class UserTableSeeder extends Seeder {
         DB::table('users')->delete();
  
         User::create(array(
-            'username' => 'firstuser',
-            'password' => Hash::make('first_password')
+            'username' => 'konos',
+            'email'=>'konos@konos.com',
+            'password' => Hash::make('1234')
         ));
  
-        User::create(array(
-            'username' => 'seconduser',
-            'password' => Hash::make('second_password')
-        ));
     }
  
 }
