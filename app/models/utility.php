@@ -41,7 +41,7 @@ class utility extends Eloquent {
             $this->hasFreeUmbrella = isset($data['hasFreeUmbrella']) ? $data['hasFreeUmbrella'] : 0;
             $this->hasPaidUmbrella = isset($data['hasPaidUmbrella']) ? $data['hasPaidUmbrella'] : 0;
             $result = $this->save();
-            echo $result;
+            //echo $result;
             if($result){
                 return true;
             } else {

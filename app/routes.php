@@ -10,7 +10,7 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
-Route::get('/', array('uses' => 'BeachController@index'));
+Route::get('/', array('uses' => 'HomeController@showWelcome'));
 
 //Route::get('details/{bid?}', array( 'uses' => 'BeachController@details'));
 
@@ -18,9 +18,9 @@ Route::get('/', array('uses' => 'BeachController@index'));
 
 //Route::get('add',array('uses'=> 'BeachController@add'));
 
-Route::get('/report/beach',array('uses'=> 'ReportController@beach'));
-Route::get('/report/review',array('uses'=> 'ReportController@review'));
-Route::get('/report/image',array('uses'=> 'ReportController@image'));
+Route::get('/report/beach/{bid}',array('uses'=> 'ReportController@beach'));
+Route::get('/report/review/{bid}',array('uses'=> 'ReportController@review'));
+Route::get('/report/image/{bid}',array('uses'=> 'ReportController@image'));
 
 Route::resource('beach','BeachController');
 Route::resource('municipality','MunicipalityController');
@@ -41,9 +41,9 @@ Route::group(
             ),
         function(){
             Route::get('beach/all/','BeachController@beaches');
-            Route::get('beach/{bid?}','BeachController@beach');
+            //Route::get('beach/{bid}','BeachController@beach');
             Route::get('review/{bid?}','ReviewController@review');
-            Route::post('beach/neighbors','BeachController@neighbors');
+            Route::get('beach/neighbors','BeachController@neighbors');
             Route::post('beach/rateup','BeachController@rateup');
             Route::post('beach/ratedown','BeachController@ratedown');
             Route::any('beach/suggest/{bid?}','BeachController@suggest');

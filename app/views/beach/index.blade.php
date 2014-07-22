@@ -45,27 +45,29 @@
 <hr>
     <div class="row">
         %% error %%
-        <div ng-repeat='beach in beaches | filter:beachFilter | orderBy:orderAttr' class="col-md-3 col-xs-12 thumbnail">
-            <a class="col-xs-5 col-md-7" href="/beach/%%beach.id%%">
-              <img src="%%beach.imagePath%%" class="media-object">
-            </a>
-            
-            <div class="caption">
-                <a class="textlink" href="/beach/%%beach.id%%">
-                    <h4 class="">%% beach.name | limitTo: 20 %%</h4>
-                    %% beach.description | limitTo: 50 %%
-                </a><br>
-                <span class="media-body"><a href="/beach/%%beach.id%%" class="btn btn-default btn-xs" role="button">More</a></span>
-                <span ng-if="beach.review_count > 0" class="media-body">
-                    <span>Rate: </span><span class="label label-info">%% beach.avg_rate %%</span>
-                </span>
-                <span ng-if="beach.review_count > 0" class="media-body">
-                    <span>Reviews: </span><span class="label label-info">%%beach.review_count%%</span>
-                </span>
-                <span ng-if="beach.review_count < 1" class="media-body">
-                    <span class="label label-info">!</span>
-                </span>
-            </div>
+        <div ng-repeat='beach in beaches | filter:beachFilter | orderBy:orderAttr' class="col-md-3 col-xs-12">
+            <div class="thumbnail">
+                <a class="col-xs-3 col-md-7" href="/beach/%%beach.id%%">
+                  <img src="%%beach.imagePath%%" class="media-object">
+                </a>
+
+                <div class="caption">
+                    <a class="textlink" href="/beach/%%beach.id%%">
+                        <h4 class="">%% beach.name | limitTo: 20 %%</h4>
+                        %% beach.description | limitTo: 50 %%
+                    </a><br>
+                    <span class="media-body"><a href="/beach/%%beach.id%%" class="btn btn-default btn-xs" role="button">More</a></span>
+                    <span ng-if="beach.review_count > 0" class="media-body">
+                        <span>Rate: </span><span class="label label-info">%% beach.avg_rate %%</span>
+                    </span>
+                    <span ng-if="beach.review_count > 0" class="media-body">
+                        <span>Reviews: </span><span class="label label-info">%%beach.review_count%%</span>
+                    </span>
+                    <span ng-if="beach.review_count < 1" class="media-body">
+                        <span>No reviews yet!</span>
+                    </span>
+                </div>
+            </div>    
         </div> 
     </div>
     <!-- End of AngularJS View -->

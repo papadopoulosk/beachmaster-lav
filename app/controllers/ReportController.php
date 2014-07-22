@@ -2,34 +2,46 @@
 
 class ReportController extends BaseController {
     
-    public $restfull = true;
-    
-    public function beach(){
-        $bid = Input::get("id");
-        $report = new report('reportbeach');
-        $report->beach_id = $bid;
-        $report->text = "Test";
-        $report->save();
-        return "Beach Reported -- ".$bid;
+    public function beach($bid){
+        if (isset($bid) && is_numeric($bid))
+        {
+//            $bid = Input::get("id");
+            $report = new report('reportbeach');
+            $report->beach_id = $bid;
+            $report->text = "Test";
+            $report->save();
+            return 1;
+        } else {
+            return 0;
+        }
     }
     
-    public function image(){
-        $bid = Input::get("id");
-        $report = new report('reportimage');
-        $report->image_id = $bid;
-        $report->text = "Test";
-        $report->save();
-        return "Image Reported";
-        
+    public function image($bid){
+        if (isset($bid) && is_numeric($bid))
+        {
+//          $bid = Input::get("id");
+            $report = new report('reportimage');
+            $report->image_id = $bid;
+            $report->text = "Test";
+            $report->save();
+            return 1;
+        } else {
+            return 0;
+        }
     }
     
-    public function review(){
-        $bid = Input::get("id");
-        $report = new report('reportreview');
-        $report->review_id = $bid;
-        $report->text = "Test";
-        $report->save();
-        return "Review Reported";
+    public function review($bid){
+        if (isset($bid) && is_numeric($bid))
+        {
+//            $bid = Input::get("id");
+            $report = new report('reportreview');
+            $report->review_id = $bid;
+            $report->text = "Test";
+            $report->save();
+            return 1;
+        } else {
+            return 0;
+        }
     }
     
 }

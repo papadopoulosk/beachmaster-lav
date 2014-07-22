@@ -20,7 +20,16 @@ class ContactController extends \BaseController {
 	 */
 	public function store()
 	{
-		return Redirect::to('/contact')->with('message','Message sent! Thank you! :)');
+            $message = new message();
+            $data = Input::all();
+            $message->setMessage($data);
+            if ($message->validate()){
+                return Redirect::to('/contact')->with('message','Message successfully sent!');
+            } else {
+                return Redirect::to('/contact')->with('message','Message not sent. :(');
+            }
+            
+            
 	}
 
 

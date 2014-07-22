@@ -6,7 +6,7 @@
     
     <div class="row-fluid">
     <div class="col-md-12 well well-sm">
-        <p class="pull-right report"><a href="#">Report content</a></p>
+        <p class="pull-right"><a class="report" href="/report/beach/{{ $beach['id'] }}">Report content</a></p>
         <h2>{{ $beach['name'] }}</h2>
         <p>{{ $beach['description'] }}</p>
         <p>Check the comments section below!</p>
@@ -54,7 +54,7 @@
                             <img src="{{ $image['imagePath'] }}" alt="...">
                             <div class="carousel-caption">
                                 <p class="">Uploaded on: {{ date_format(date_create($image['created_at']), 'd-m-Y') }}</p>
-                                <p class="report"><a href="#">Report image</a></p>
+                                <p><a class="report" href="/report/image/{{ $image['id'] }}">Report image</a></p>
                             </div>
                         </div>
                         <?php $count=0; ?>
@@ -133,7 +133,7 @@
                 <p><span class="glyphicon glyphicon-search"></span>&nbsp; %% review.title %% (Rate: %% review.rate %%)</p>
                 <footer> %% review.text %%</footer> 
                 <footer> %% review.created_at %% </footer>
-                <span><a href="#" class="report">Report</a></span>
+                <span><a class='report' href="/report/review/%% review.id %%">Report</a></span>
             </blockquote>
             
         </div>
@@ -200,12 +200,13 @@
 
 </div>
 
-<!-- Tab panes -->
-<!--<div class="tab-content">
-  <div class="tab-pane active" id="home">...</div>
-  <div class="tab-pane" id="profile">..1</div>
-  <div class="tab-pane" id="messages">..2</div>
-  <div class="tab-pane" id="settings">..3</div>
-</div>-->
+<script>
+$('.report').click(function(e){
+    e.preventDefault();
+    alert("Report clicked");
+    
+});
+
+</script>
 
 @stop

@@ -50,7 +50,7 @@ function beachController($scope, $http, $location){
             // this callback will be called asynchronously
             // when the response is available
             //var data = data['data'];
-            console.log(data);
+            //console.log(data);
             if (data!==false){
                         markers = data;
                 $scope.beaches = data;
@@ -79,6 +79,105 @@ function beachController($scope, $http, $location){
     };
     loadBeaches();
 }
+
+function recommendationController($scope,$http){
+    
+    $scope.content =  "Click on the map to see if your beach already exists!";
+    $scope.neighbors = "";
+    
+    addMarker();
+    function addMarker(){
+            
+            $("#map").gmap3({
+                map: {
+                    options: {
+                        center: [39.50404070558415, 23.818359375],
+                        zoom: 7,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP,
+                        mapTypeControl: false,
+                        
+                        navigationControl: true,
+                        scrollwheel: true
+                    },
+                    events: {
+                        click: function (map, event) {
+                            //$("#recommendation").html('<p class="well">Checking...  <img src="/images/loading.gif"></p>');
+                            $scope.content = "Searching...";
+                            $(this).gmap3(
+                               {
+                                   clear:{id:'tempMarker'},
+                                   marker: {
+                                       latLng: event.latLng,
+                                       id:"tempMarker"
+                                   },
+                                   getaddress:{
+                                    latLng:event.latLng,
+                                    callback:function(results){
+                                        municipality = results && results[1] ? results && results[0].address_components[2].short_name: "no address";
+                                        prefecture = results && results[1] ? results && results[0].address_components[3].short_name: "no address";
+                                        content = results && results[1] ? results && "Result "+results[0].address_components[2].short_name+" - "+results[0].address_components[3].short_name : "no address";
+                                        //console.log(content);
+                                        $('#municipality').val(municipality);
+                                        $('#prefecture').val(prefecture);
+                                    }
+                                  }
+                               });
+                            $('#latitude').val(event.latLng.lat());
+                            $('#longitude').val(event.latLng.lng());
+                            
+                            //Retrieve nearest beaches
+                            
+                            data = "lat="+event.latLng.lat()+"&lng="+event.latLng.lng();
+                            SearchNeighbors(data);
+                        }
+                    }
+                }
+            });
+            
+        }
+    function SearchNeighbors(data){
+        console.log('/api/v1/beach/neighbors?'+data);
+        $http({method: 'GET', url: '/api/v1/beach/neighbors?'+data})
+            .success(function(data, status, headers, config) {
+                if (status===200){
+                    $scope.neighbors = data;
+                    $scope.content = 'Check the suggestions!';
+                } else {
+                    $scope.neighbors = "";
+                    $scope.content = 'No beaches found! You can go on and add more details';
+                }
+            }).error(function(data, status, headers, config) {
+                    $scope.neighbors = "";
+                    $scope.content = 'No beaches found! You can go on and add more details';
+            });
+        }
+        
+    $scope.createModal = function(beach){
+        $scope.modalName = beach.name;
+        $scope.modalDescription = beach.description;
+        $scope.modalImagePath = beach.imagePath;
+        $scope.modalId = beach.id;
+    };
+    
+    $scope.suggest = function(){
+        $('#loading-btn').button('loading');
+        var bid = $scope.modalId;
+        $http({method: 'GET', url: '/api/v1/beach/suggest/'+bid})
+        .success(function(data, status, headers, config) {
+            if (status===200){
+                $('#loading-btn').button('reset');
+                $scope.result = "Success!";
+            } else {
+                $('#loading-btn').button('reset');
+                $scope.result = "Failure during suggestion";
+            }
+        }).error(function(data, status, headers, config) {
+            $('#loading-btn').button('reset');  
+            $scope.result = "Failure during suggestion";
+        });
+    };
+}
+
 
 function reviewController($scope, $http){
     var loadReviews = function(beach){

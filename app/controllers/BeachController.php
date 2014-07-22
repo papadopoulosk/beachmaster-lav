@@ -5,10 +5,6 @@ class BeachController extends BaseController {
     public $restfull = true;
     protected $layout = 'layout.default';
         
-    public function __construct() {
-        
-    }
-    
     public function index() {
         
         $municipalities = municipality::select("municipalities.id",'municipalities.name','municipalities.prefecture_id')
@@ -58,19 +54,8 @@ class BeachController extends BaseController {
         $beach = new beach;
                 
         $data = Input::all();
-        //Validation Rules
-            $rules = array(
-                'name' =>'required',
-                'description' =>'required',
-                'latitude' =>'required',
-                'longitude' =>'required',
-                'imagePath' =>'required',
-                'prefecture' =>'required',
-                'municipality' => 'required'
-            );
-            
-        $validator = Validator::make($data,$rules);
-        if($validator->passes()){
+        
+        if($beach->validate($data)){
             $prefecture = prefecture::firstOrNew(array('name'=> $data['prefecture']));
             $prefecture->name = $data['prefecture'];
             $prefecture->save();
@@ -80,7 +65,7 @@ class BeachController extends BaseController {
             $municipality->name = $data['municipality'];
             $municipality->save();
             
-            $file = $data['imagePath'];
+            //$file = $data['imagePath'];
 
             $beach->name = $data['name'];
             $beach->description = $data['description']; 
@@ -147,44 +132,35 @@ class BeachController extends BaseController {
                 
         $whereClause = 'beaches.approved = 1'.$queryA.$queryB;
 
-        //Custom Query for join operation
-//        $beaches = DB::table(DB::raw('beaches as b'))
-//                ->leftjoin('reviews as r', 'b.id', '=', 'r.beachId')
-//                ->leftjoin('images as img', 'b.id','=','img.beach_id')
-//                ->select(array('b.id','b.name','b.description','img.imagePath','b.latitude','b.longitude',
-//                    DB::raw('count(r.id) as review_count'),DB::raw('format(avg(r.rate),1) as avg_rate'))
-//                        )
-//                ->whereRaw($whereClause)
-//                ->groupBy('b.id')->toSql();
-        $beaches = DB::SELECT('SELECT beaches.id,
-                           beaches.name,
-                           beaches.description,
-                           beaches.longitude,
-                           beaches.latitude,
-                           beaches.municipality_id,
-                           beaches.prefecture_id,
-                           img_r.imagePath,
-                           img_r.review_count,
-                           img_r.avg_rate
-                      FROM beaches
-                           LEFT JOIN (SELECT DISTINCT imagePath, r.beachId, r.review_count, r.avg_rate
-                                        FROM images
-                                             INNER JOIN
-                                             (SELECT DISTINCT
-                                                     beachId, count(beachId) AS review_count, format(avg(reviews.rate),1) as avg_rate
-                                                FROM reviews
-                                              GROUP BY beachId) r
-                                                ON images.beach_id = r.beachId Group by r.beachId) img_r
-                              ON img_r.beachId = beaches.id WHERE '.$whereClause.';');
+        $beaches = DB::SELECT(
+            'SELECT beaches.id,
+                beaches.name,
+                beaches.description,
+                beaches.longitude,
+                beaches.latitude,
+                beaches.municipality_id,
+                beaches.prefecture_id,
+                img.imagePath,
+               r.review_count,
+               r.avg_rate
+            FROM beaches
+            LEFT JOIN (
+                SELECT DISTINCT beach_id, imagePath
+                FROM images
+                GROUP BY beach_id) img
+            ON img.beach_id = beaches.id
+            Left JOIN (
+                SELECT DISTINCT beachId, count(beachId) AS review_count,format(avg(reviews.rate),1) AS avg_rate
+                FROM reviews
+                GROUP BY beachId) r
+            on beaches.id = r.beachId
+            WHERE '.$whereClause.';');
 
         if (count($beaches)<1){
             return $this->throwError();
         } else {
             return json_encode($beaches);            
         }
-        
- //       return json_encode($beaches);
-
       }
       
     public function beach($bid=null){
@@ -209,6 +185,7 @@ class BeachController extends BaseController {
         //Utilised during beach submittion process
         $lat = Input::get("lat"); 
         $lng = Input::get("lng");
+
         if (!is_null($lat) && !is_null($lng)){
             //Ratio to estimate nearest beaches
             $ratio = 0.002;
@@ -219,10 +196,11 @@ class BeachController extends BaseController {
             $minlng = $lng * $minRatio;
             $maxlng = $lng * $maxRatio;            
             
-            
-            $data = beach::select("id","name","description","imagePath")
+            $data = beach::select("beaches.id","beaches.name","beaches.description","images.imagePath")
                     ->whereRaw('latitude > ? and `latitude` < ? and `longitude` > ? and `longitude` < ?',
                     array($minlat,$maxlat,$minlng,$maxlng))
+                    ->leftJoin('images', 'images.beach_id', '=', 'beaches.id')
+                    ->groupBy('beaches.id')
                     ->get();
             
             $count = beach::select("name")
@@ -235,6 +213,8 @@ class BeachController extends BaseController {
             } else {
                 return $this->throwError();
             }
+        }else {
+                return $this->throwError();
         }
     }
     
@@ -282,15 +262,10 @@ class BeachController extends BaseController {
             $beach = beach::find($bid);
             if (!is_null($beach)){
                 $num = $beach->suggestions + 1;
-                if ($num >= $approve_limit){
-                    $beach->approved = true;
-                    //return "approved";
-                } else {
-                    //return "pending";
-                }
+                if ($num >= $approve_limit)$beach->approved = true;
                 $beach->suggestions = $num;
                 $beach->save();
-                return Redirect::to('/')->with('message','Your suggestion has been documented and the beach will be approved soon!');
+                return Response::json('200', 200);
             } else {
                 return $this->throwError();
             }

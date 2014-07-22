@@ -7,8 +7,8 @@
             <ol class="list-unstyled">
               <li><a href="#">Login</a></li>
               <li><a href="#">Register</a></li>
-              <li><a href="/add">New beach</a></li>
-              <li><a href="/">Discover</a></li>
+              <li><a href="/beach/create">New beach</a></li>
+              <li><a href="/beach">Discover</a></li>
               <li><a href="/about">About</a></li>
               <li><a href="/contact">Contact us</a></li>
               <li><a href="#">Terms of Use</a></li>

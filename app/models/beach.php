@@ -4,8 +4,7 @@ class beach extends Eloquent {
     
     protected $table = "beaches";
     
-    public function review()
-    {
+    public function review(){
         return $this->hasMany('review','beachId');
     }
     
@@ -23,6 +22,20 @@ class beach extends Eloquent {
     
     public function images(){
         return $this->hasMany('images','beach_id');
+    }
+
+    public function validate($data){
+        $rules = array(
+                'name' =>'required',
+                'description' =>'required',
+                'latitude' =>'required',
+                'longitude' =>'required',
+                'imagePath' =>'required',
+                'prefecture' =>'required',
+                'municipality' => 'required'
+        );
+        $validator = Validator::make($data,$rules);
+        return $validator->passes();
     }
 }
 
