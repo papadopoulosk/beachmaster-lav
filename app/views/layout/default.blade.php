@@ -7,8 +7,11 @@
 @include('includes.header')
 <div class="container">
         @if(Session::has('message'))
-            <div class="row-fluid col-md-12">
-                <p class="alert alert-warning col-md-6">{{ Session::get('message') }}</p>
+            <div class="row-fluid col-md-6">
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    {{ Session::get('message') }}
+                </div>
             </div>
         @endif
         

@@ -179,7 +179,7 @@ function recommendationController($scope,$http){
 }
 
 
-function reviewController($scope, $http){
+function reviewController($scope, $filter, $http){
     var loadReviews = function(beach){
         $scope.reviews = [];
         $scope.error = "";
@@ -187,7 +187,8 @@ function reviewController($scope, $http){
             success(function(data, status, headers, config) {
             // this callback will be called asynchronously
             // when the response is available
-            $scope.reviews = data;
+            $scope.reviews = $filter('orderBy')(data,'created_at',true);
+            
         }).error(function(data, status, headers, config) {
           // called asynchronously if an error occurs
           // or server returns response with an error status.

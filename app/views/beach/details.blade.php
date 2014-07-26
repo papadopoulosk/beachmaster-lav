@@ -6,12 +6,10 @@
     
     <div class="row-fluid">
     <div class="col-md-12 well well-sm">
-        <p class="pull-right"><a class="report" href="/report/beach/{{ $beach['id'] }}">Report content</a></p>
+        <p class="pull-right"><a class="report" href="/report/beach/{{ $beach['id'] }}">Report</a></p>
         <h2>{{ $beach['name'] }}</h2>
         <p>{{ $beach['description'] }}</p>
-        <p>Check the comments section below!</p>
-        <p>..or add your own reviews regarding {{ $beach['name'] }}</p>
-        
+        <button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span></button>
     </div>
     
     </div>
@@ -53,8 +51,8 @@
                         <div class="item <?php if ($count==1) echo "active"?>" >
                             <img src="{{ $image['imagePath'] }}" alt="...">
                             <div class="carousel-caption">
-                                <p class="">Uploaded on: {{ date_format(date_create($image['created_at']), 'd-m-Y') }}</p>
-                                <p><a class="report" href="/report/image/{{ $image['id'] }}">Report image</a></p>
+                                <p class="label label-primary">Uploaded on: {{ date_format(date_create($image['created_at']), 'd-m-Y') }}</p>
+                                <p class=""><a class="report label label-warning" href="/report/image/{{ $image['id'] }}">Report image</a></p>
                             </div>
                         </div>
                         <?php $count=0; ?>
@@ -70,7 +68,23 @@
                 </a>
             </div>
             <!-- End of carousel -->
-            <div class="col-md-3 col-xs-12">
+            
+            <div ng-controller="reviewController">
+               
+                <div ng-repeat='review in reviews | orderBy:review.created_at' class="col-md-3 col-xs-12">
+                    <blockquote>
+                        <p><span class="glyphicon glyphicon-search"></span>&nbsp; %% review.title %% (Rate: %% review.rate %%)</p>
+                        <footer> %% review.text %%</footer> 
+                        <span><a class='report' href="/report/review/%% review.id %%">Report</a></span><span class="report">&nbsp;%% review.created_at %%</span>
+                    </blockquote>
+
+                </div>
+            </div>
+            
+        </div>
+        <div class="row">
+            <br>
+            <div class="col-md-12 col-xs-12">
             {{ Form::open(array(
                 'method'=>'post', 
                 'url' => '/image',

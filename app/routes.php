@@ -21,6 +21,7 @@ Route::get('/', array('uses' => 'HomeController@showWelcome'));
 Route::get('/report/beach/{bid}',array('uses'=> 'ReportController@beach'));
 Route::get('/report/review/{bid}',array('uses'=> 'ReportController@review'));
 Route::get('/report/image/{bid}',array('uses'=> 'ReportController@image'));
+Route::get('/logout','AuthController@destroy');
 
 Route::resource('beach','BeachController');
 Route::resource('municipality','MunicipalityController');
@@ -29,8 +30,9 @@ Route::resource('contact','ContactController',array('only' => array('index', 'st
 Route::resource('about','aboutController',array('only' => array('index')));
 Route::resource('image', 'ImageController',array('only' => array('store')));
 Route::resource('utilities', 'UtilityController',array('only' => array('store')));
+Route::resource('auth', 'AuthController',array('only' => array('index','destroy','store')));
 
-Route::get('admin',function(){
+Route::get('/admin',function(){
     return View::make('admin.index');
 })->before('auth.basic');
 

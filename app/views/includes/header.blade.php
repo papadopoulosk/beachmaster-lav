@@ -35,8 +35,13 @@
             <li class="disabled"><a href="#">What is Beach Master</a></li>
             <li class="disabled"><a href="#">Terms of Use</a></li>
             <li class="divider"></li>
-            <li class="disabled"><a href="#">Register</a></li>
-            <li class="disabled"><a href="#">Login</a></li>
+            @if (Auth::check())
+                <li class=""><a href="/admin">Dashboard</a></li>
+                <li class=""><a href="/logout">Logout</a></li>
+            @else
+                <li class="disabled"><a href="#">Register</a></li>
+                <li class=""><a href="/auth">Login</a></li>
+            @endif
           </ul>
         </li>
       </ul>
