@@ -4,12 +4,28 @@
 <div class="row">
     <!-- Nav tabs -->
     
-    <div class="row-fluid">
+    <div class="row-fluid" ng-controller="singleBeachController">
     <div class="col-md-12 well well-sm">
-        <p class="pull-right"><a class="report" href="/report/beach/{{ $beach['id'] }}">Report</a></p>
+        <p class="pull-right"><a class="report" ng-click="reportBeach({{ $beach['id'] }})" href="">%% reportStatus %% </a></p>
+        
         <h2>{{ $beach['name'] }}</h2>
-        <p>{{ $beach['description'] }}</p>
-        <button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span></button>
+        <p ng-show="!showEditForm" id="beachDescriptionField">{{ $beach['description'] }}</p>
+        
+        <div ng-show="showEditForm">
+            
+        
+        {{ Form::model($beach) }}
+        <div class="form-group">
+        {{ Form::textarea('description',null,array('class'=>'form-control','required'=>'true','id'=>'newDescription')) }}
+        </div>
+        <div class="form-group">
+        {{ Form::button('Update', array('class'=>'btn btn-success', "ng-click"=>"update(".$beach['id'].")")) }}
+        </div>
+        {{ Form::close() }}
+        
+        </div>
+        <button ng-show="!showEditForm" type="button" class="btn btn-default btn-sm" ng-click="editable()"><span class="glyphicon glyphicon-pencil"></span></button>
+        <p id="beachLastUpdateField" class="report">Last updated: {{ $beach['updated_at'] }}</p>
     </div>
     
     </div>
@@ -34,7 +50,7 @@
     <div class="col-md-12 col-xs-12">        
         <div class="row">
             <!-- Start of Carousel -->
-            <div id="carousel-example-generic" class="carousel slide col-md-9 col-xs-12" data-ride="carousel"> 
+            <div id="carousel-example-generic" class="carousel slide col-md-9 col-xs-12" data-ride="carousel" ng-controller="imageController"> 
                 <!-- Indicators -->
                 <ol class="carousel-indicators">
                   <?php $count = 1; ?>
@@ -52,7 +68,7 @@
                             <img src="{{ $image['imagePath'] }}" alt="...">
                             <div class="carousel-caption">
                                 <p class="label label-primary">Uploaded on: {{ date_format(date_create($image['created_at']), 'd-m-Y') }}</p>
-                                <p class=""><a class="report label label-warning" href="/report/image/{{ $image['id'] }}">Report image</a></p>
+                                <p class=""><a class="report label label-warning" ng-click="reportImage({{ $image['id'] }})" href="javascript:void(0)">Report image</a></p>
                             </div>
                         </div>
                         <?php $count=0; ?>
@@ -75,7 +91,7 @@
                     <blockquote>
                         <p><span class="glyphicon glyphicon-search"></span>&nbsp; %% review.title %% (Rate: %% review.rate %%)</p>
                         <footer> %% review.text %%</footer> 
-                        <span><a class='report' href="/report/review/%% review.id %%">Report</a></span><span class="report">&nbsp;%% review.created_at %%</span>
+                        <span><a class='report' ng-click="reportReview(review.id)" href="javascript:void(0)">%% reportStatus %%</a></span><span class="report">&nbsp;%% review.created_at %%</span>
                     </blockquote>
 
                 </div>
@@ -213,14 +229,4 @@
 <!--End of pane Utilities-->
 
 </div>
-
-<script>
-$('.report').click(function(e){
-    e.preventDefault();
-    alert("Report clicked");
-    
-});
-
-</script>
-
 @stop

@@ -180,6 +180,28 @@ class BeachController extends BaseController {
         }
     }
     
+    public function updateDescription(){
+        $data = Input::all();
+        if (Input::has('description') && Input::has('id') && is_numeric(Input::get('id'))){
+            $description = $data['description'];
+            $beachId = $data['id'];
+            $beach = beach::find($beachId);
+            if (!is_null($beach)) {
+                $beach->description = $description;
+                $beach->save();
+                $lastUpdate = $beach->updated_at->toDateTimeString();;
+               return Response::json(array('beachId' => $beachId, 'updated_at' => $lastUpdate));
+            } else {
+                return $this->throwError();                
+            }
+        } else {
+            return $this->throwError();
+        }
+        
+        
+        
+    }
+    
     public function neighbors(){
         //Generate nearest beaches
         //Utilised during beach submittion process

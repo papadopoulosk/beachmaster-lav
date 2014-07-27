@@ -49,5 +49,6 @@ Route::group(
             Route::post('beach/rateup','BeachController@rateup');
             Route::post('beach/ratedown','BeachController@ratedown');
             Route::any('beach/suggest/{bid?}','BeachController@suggest');
+            Route::post('beach/updateDescription','BeachController@updateDescription');
         }
 );

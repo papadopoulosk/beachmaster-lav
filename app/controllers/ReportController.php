@@ -10,9 +10,9 @@ class ReportController extends BaseController {
             $report->beach_id = $bid;
             $report->text = "Test";
             $report->save();
-            return 1;
+            return $this->success();
         } else {
-            return 0;
+            return $this->throwError();
         }
     }
     
@@ -24,9 +24,9 @@ class ReportController extends BaseController {
             $report->image_id = $bid;
             $report->text = "Test";
             $report->save();
-            return 1;
+            return $this->success();
         } else {
-            return 0;
+            return $this->throwError();
         }
     }
     
@@ -38,10 +38,18 @@ class ReportController extends BaseController {
             $report->review_id = $bid;
             $report->text = "Test";
             $report->save();
-            return 1;
+            return $this->success();
         } else {
-            return 0;
+            return $this->throwError();
         }
+    }
+    
+    private function throwError (){
+        return Response::json('Processing failed', 400);
+    }
+    
+    private function success(){
+        return Response::json('Success', 201);
     }
     
 }

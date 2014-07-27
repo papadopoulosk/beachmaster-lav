@@ -8,7 +8,7 @@ beachApp.config(function($interpolateProvider) {
 
 function beachController($scope, $http, $location){
     var markers = [];
-    
+
     //Update Prefecture
     $scope.updatePrefecture = function(){
        prefecture = $scope.prefecture;
@@ -47,10 +47,6 @@ function beachController($scope, $http, $location){
         
         $http({method: 'GET', url: url}).
             success(function(data, status, headers, config) {
-            // this callback will be called asynchronously
-            // when the response is available
-            //var data = data['data'];
-            //console.log(data);
             if (data!==false){
                         markers = data;
                 $scope.beaches = data;
@@ -67,17 +63,55 @@ function beachController($scope, $http, $location){
                $scope.orderAttr='name'; 
                  //Custom function to Initiate Gmap plugin
                 initGmap(values);
-                $('#beachContent').fadeIn('slow')
-               
+                $('#beachContent').fadeIn('slow');
             }
-        }).error(function(data, status, headers, config) {
-          // called asynchronously if an error occurs
-          // or server returns response with an error status.
+        }).error(function() {
           $scope.error = 'No beaches found! :-(';
         });
         
     };
     loadBeaches();
+    
+    
+}
+
+function singleBeachController($scope, $http) {
+    //$scope.description = 'ASD';
+    $scope.showEditForm = false;
+    $scope.reportStatus = 'Report';
+    
+    $scope.reportBeach = function(beachId){
+        $scope.reportStatus = 'Report';
+        $http({method: 'GET', url: '/report/beach/'+beachId}).
+            success(function() {
+            $scope.reportStatus = 'Reported';
+        }).error(function() {
+            $scope.reportStatus = 'Failed report';
+        }); 
+    };
+    
+    $scope.editable = function(){
+        if ($scope.showEditForm){
+            $scope.showEditForm = false;
+        } else {
+            $scope.showEditForm = true;
+        }
+    }
+    
+    $scope.update = function(beachId){
+        var description = angular.element('#newDescription').val();
+        console.log(description);
+        var data = {'description': description, 'id':beachId};
+        $http({method: 'POST', url: '/api/v1/beach/updateDescription', data: data}).
+            success(function(data) {
+            $('#beachDescriptionField').text(description);
+            //var returnedData = JSON.parse(data);
+            $('#beachLastUpdateField').html('Last Updated: '+data.updated_at);
+            $scope.editable();
+        }).error(function(data) {
+            $scope.editable();
+        });
+    };
 }
 
 function recommendationController($scope,$http){
@@ -178,26 +212,45 @@ function recommendationController($scope,$http){
     };
 }
 
+function imageController ($scope, $http){
+    
+    $scope.reportImage = function(imageId){
+        $scope.reportStatus = 'Report';
+        $http({method: 'GET', url: '/report/image/'+imageId}).
+            success(function() {
+            alert("Image Reported");
+        }).error(function() {
+            //Do nothing.. for now..
+        });
+    };
+}
 
 function reviewController($scope, $filter, $http){
     var loadReviews = function(beach){
+        $scope.reportStatus = 'Report';
         $scope.reviews = [];
         $scope.error = "";
         $http({method: 'GET', url: '/review/'+beach}).
-            success(function(data, status, headers, config) {
-            // this callback will be called asynchronously
-            // when the response is available
+            success(function(data) {
             $scope.reviews = $filter('orderBy')(data,'created_at',true);
             
-        }).error(function(data, status, headers, config) {
-          // called asynchronously if an error occurs
-          // or server returns response with an error status.
+        }).error(function() {
           error = 'Something went terribly wrong. Please contact us about the issue.';
         });
     }
     var url = document.URL;
     beach = url.split('/').pop();
     loadReviews(beach);
+    
+    $scope.reportReview = function(ReviewId){
+        $http({method: 'GET', url: '/report/review/'+ReviewId}).
+            success(function() {
+            $scope.reportStatus = 'Reported';
+            
+        }).error(function() {
+            $scope.reportStatus = 'Error';
+        });
+    };
 }
 //Gmap plugin in Home page
 //Initiated through AngularJS call
