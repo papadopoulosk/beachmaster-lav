@@ -18,6 +18,7 @@ class CreateBeachesTable extends Migration {
                 $table->string('name');
                 $table->text('description');
                 $table->boolean('approved')->default(false);
+                $table->index('approved');
                 $table->smallInteger('suggestions')->default(0);
                 $table->string('imagePath');
                 $table->decimal('latitude', 18, 14);
@@ -25,7 +26,9 @@ class CreateBeachesTable extends Migration {
                 $table->integer('prefecture_id')->unsigned();
                 $table->integer('municipality_id')->unsigned();
                 $table->foreign('prefecture_id')->references('id')->on('prefectures');//->onDelete('cascade');
+                //$table->index('prefecture_id');
                 $table->foreign('municipality_id')->references('id')->on('municipalities');//->onDelete('cascade');  
+                //$table->index('municipality_id');
                 $table->tinyInteger('report')->default(0);
                 $table->timestamps();
             });

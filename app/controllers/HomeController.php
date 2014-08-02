@@ -17,7 +17,10 @@ class HomeController extends BaseController {
 
 	public function showWelcome()
 	{
-		return View::make('hello');
+                $beachCount = beach::remember(60)->where("approved", "=", 1)->count();
+                $reviewCount = review::remember(60)->count();
+                
+		return View::make('hello')->with("beachCount", $beachCount)->with("reviewCount",$reviewCount);
 	}
 
 }

@@ -1,4 +1,4 @@
-var beachApp = angular.module('beachApp',[]);
+var beachApp = angular.module("beachApp",['ngAnimate', 'ui.bootstrap']);
 //var beachApp = angular.module('beachApp', ['ui.bootstrap']);
 
 beachApp.config(function($interpolateProvider) {
@@ -9,11 +9,28 @@ beachApp.config(function($interpolateProvider) {
 function beachController($scope, $http, $location){
     var markers = [];
 
+    $scope.prefecture;
+    $scope.municipality;
+    
+    $scope.beaches = [];
+    $scope.error = "";
+    $scope.orderAttr="";
+
+    $scope.numPerPage = 8;
+    
+    $scope.currentPage = 1;
+    $scope.bigCurrentPage = 1;
+    
+    $scope.bigTotalItems = 0;
+    $scope.totalItems = 0;
+    $scope.maxSize = 5;
+    
     //Update Prefecture
     $scope.updatePrefecture = function(){
        prefecture = $scope.prefecture;
-       $("#map").gmap3({clear:markers});
+
        $scope.municipality = '';
+       $scope.currentPage = 1;
        loadBeaches(prefecture,null);
     };
 
@@ -21,14 +38,17 @@ function beachController($scope, $http, $location){
     $scope.updateMunicipality = function(){
        prefecture = $scope.prefecture;
        municipality = $scope.municipality;
-       $("#map").gmap3({clear:markers});
+       
+       $scope.currentPage = 1;
        loadBeaches(prefecture,municipality);
     };
 
-    var loadBeaches = function(prefecture,municipality){
-        
+    var loadBeaches = function(prefecture,municipality, page){
+        $("#map").gmap3({clear:markers});
+        //$scope.beaches = "";
         if(typeof(prefecture)==='undefined') prefecture = "";
         if(typeof(municipality)==='undefined') municipality = "";
+        if(typeof(page)==='undefined') page = "";
         url = 'api/v1/beach/all?';
         if (prefecture!=="" && prefecture !==null) {
             url = url + 'prefecture='+prefecture;
@@ -36,19 +56,19 @@ function beachController($scope, $http, $location){
         if(municipality!=="" && municipality!==null){
                 url = url+'&municipality='+municipality;
         }
+        if(page!=="" && page!==null){
+                url = url+'&page='+page;
+        }
         console.log(url);        
-        $scope.beaches = [];
-        $scope.error = "";
-        $scope.orderAttr="";
         
-        $scope.currentPage = 1;
-        $scope.numPerPage = 4;
-        $scope.maxSize = 5;
         
-        $http({method: 'GET', url: url}).
-            success(function(data, status, headers, config) {
-            if (data!==false){
-                        markers = data;
+        $http({method: 'GET', url: url})
+                .success(function(fullData, status, headers, config) {
+            if (fullData!==false){
+                data = fullData.data;
+                $scope.totalItems = fullData.total;
+                $scope.bigTotalItems = fullData.total;;
+                markers = data;
                 $scope.beaches = data;
                 var counter = 0;
                 var values = [];
@@ -63,26 +83,35 @@ function beachController($scope, $http, $location){
                $scope.orderAttr='name'; 
                  //Custom function to Initiate Gmap plugin
                 initGmap(values);
-                $('#beachContent').fadeIn('slow');
+                //$('#beachContent').fadeIn('slow');
             }
         }).error(function() {
-          $scope.error = 'No beaches found! :-(';
+//          $scope.error = 'No beaches found! :-(';
+          $scope.beaches = '';
+          $scope.totalItems = 0;
         });
         
     };
     loadBeaches();
     
-    
+    $scope.setPage = function (pageNo) {
+      $scope.currentPage = pageNo;
+      loadBeaches($scope.prefecture,$scope.municipality, pageNo);
+    };
+
+    $scope.pageChanged = function() {
+      console.log('Page changed to: ' + $scope.currentPage);
+      loadBeaches($scope.prefecture,$scope.municipality, $scope.currentPage);
+    };  
 }
 
 function singleBeachController($scope, $http) {
-    //$scope.description = 'ASD';
     $scope.showEditForm = false;
     $scope.reportStatus = 'Report';
     
     $scope.reportBeach = function(beachId){
-        $scope.reportStatus = 'Report';
-        $http({method: 'GET', url: '/report/beach/'+beachId}).
+        url = '/report/beach/'+beachId;
+        $http({method: 'GET', url: url}).
             success(function() {
             $scope.reportStatus = 'Reported';
         }).error(function() {
@@ -191,6 +220,7 @@ function recommendationController($scope,$http){
         $scope.modalDescription = beach.description;
         $scope.modalImagePath = beach.imagePath;
         $scope.modalId = beach.id;
+        $('#myModal').delay(1800).modal('show');
     };
     
     $scope.suggest = function(){
@@ -232,23 +262,32 @@ function reviewController($scope, $filter, $http){
         $scope.error = "";
         $http({method: 'GET', url: '/review/'+beach}).
             success(function(data) {
+                //console.log(data);
             $scope.reviews = $filter('orderBy')(data,'created_at',true);
-            
+            $.each(data, function(i, item) {
+                data[i].reportStatus = "Report";
+            });
+
         }).error(function() {
           error = 'Something went terribly wrong. Please contact us about the issue.';
         });
-    }
+    };
     var url = document.URL;
     beach = url.split('/').pop();
     loadReviews(beach);
     
-    $scope.reportReview = function(ReviewId){
-        $http({method: 'GET', url: '/report/review/'+ReviewId}).
+    $scope.reportReview = function(reviewId){
+        console.log(reviewId);
+        $http({method: 'GET', url: '/report/review/'+reviewId}).
             success(function() {
-            $scope.reportStatus = 'Reported';
-            
+            //$scope.review.reportStatus = 'Reported';
+            $.each($scope.reviews, function(i, item) {
+                if (item.id === reviewId) {
+                    item.reportStatus = "Reported";
+                }
+            });
         }).error(function() {
-            $scope.reportStatus = 'Error';
+            //$scope.review.reportStatus = 'Error';
         });
     };
 }
@@ -256,22 +295,6 @@ function reviewController($scope, $filter, $http){
 //Initiated through AngularJS call
 function initGmap(dataValues){
     $("#map").gmap3({
-           getgeoloc:{
-                callback : function(latLng){
-                  if (latLng){
-                    $(this).gmap3({
-                      marker:{ 
-                        //latLng:latLng
-                      },
-                      map:{
-                        options:{
-                         // zoom: 10
-                        }
-                      }
-                    });
-                  }
-                }
-              },
            options:{
                 //zoom: 10
            },
@@ -285,20 +308,8 @@ function initGmap(dataValues){
                     click: function(marker, event, context){
                         var name="";  
                         var map = $(this).gmap3("get");
-//                        infowindow = $(this).gmap3({get:{name:"infowindow"}});
                         $("#searchFilter").val(context.data);
                         $("#searchFilter").trigger('input');
-//                        if (infowindow){
-//                            infowindow.open(map, marker);
-//                            infowindow.setContent(context.data);
-//                        } else {
-//                            $(this).gmap3({
-//                              infowindow:{
-//                                anchor:marker, 
-//                                options:{content: context.data}
-//                              }
-//                            });
-//                        }
                     },
                     mouseout: function(){
                       var infowindow = $(this).gmap3({get:{name:"infowindow"}});
@@ -311,20 +322,3 @@ function initGmap(dataValues){
           ,autofit:{}
           });
 }
-
-var PaginationDemoCtrl = function ($scope) {
-  $scope.totalItems = 64;
-  $scope.currentPage = 4;
-
-  $scope.setPage = function (pageNo) {
-    $scope.currentPage = pageNo;
-  };
-
-  $scope.pageChanged = function() {
-    console.log('Page changed to: ' + $scope.currentPage);
-  };
-
-  $scope.maxSize = 5;
-  $scope.bigTotalItems = 175;
-  $scope.bigCurrentPage = 1;
-};

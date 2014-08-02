@@ -8,16 +8,14 @@
 
 
 <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">-->
 {{ HTML::style('css/bootstrap.min.css') }}
 
 <!-- Main CSS file for custom changes -->
 {{ HTML::style('css/mainCSS.css') }}
 
 <!-- Jquery Plugin -->
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
-<!-- Optional theme -->
-<!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
@@ -28,3 +26,8 @@
 <!-- GMap3 plugin -->
 {{ HTML::script('scripts/gmap3.min.js') }}
 
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.20/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.20/angular-animate.js"></script>
+{{ HTML::script('scripts/ui-bootstrap-tpls-0.11.0.min.js') }}
+<!-- Angular application file -->
+{{ HTML::script('scripts/myangular.js') }}

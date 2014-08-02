@@ -5,8 +5,7 @@ class ReportController extends BaseController {
     public function beach($bid){
         if (isset($bid) && is_numeric($bid))
         {
-//            $bid = Input::get("id");
-            $report = new report('reportbeach');
+            $report = new report('reportBeach');
             $report->beach_id = $bid;
             $report->text = "Test";
             $report->save();
@@ -19,8 +18,7 @@ class ReportController extends BaseController {
     public function image($bid){
         if (isset($bid) && is_numeric($bid))
         {
-//          $bid = Input::get("id");
-            $report = new report('reportimage');
+            $report = new report('reportImage');
             $report->image_id = $bid;
             $report->text = "Test";
             $report->save();
@@ -33,8 +31,7 @@ class ReportController extends BaseController {
     public function review($bid){
         if (isset($bid) && is_numeric($bid))
         {
-//            $bid = Input::get("id");
-            $report = new report('reportreview');
+            $report = new report('reportReview');
             $report->review_id = $bid;
             $report->text = "Test";
             $report->save();

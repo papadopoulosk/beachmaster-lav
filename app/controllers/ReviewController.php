@@ -44,7 +44,7 @@ class ReviewController extends BaseController {
         //$bId = Input::get('bid');
         if (!is_null($bId)){
             $reviews = review::where('beachId', '=',$bId)->get();
-            return json_encode($reviews->toArray());    
+            return $reviews->toJson();    
         } else {
             return "error";//Response::json('Improper parameters', 404);
         }

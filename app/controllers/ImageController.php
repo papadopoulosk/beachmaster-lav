@@ -6,7 +6,6 @@ class ImageController extends BaseController {
      
 public function store(){
             $error = false;
-            
             if (Input::has('bid')){
                 $bid = Input::get('bid');
             } else {

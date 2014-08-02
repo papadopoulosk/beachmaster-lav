@@ -10,6 +10,12 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
+
+Event::listen('illuminate.query', function($query){
+//    var_dump($query);
+//    var_dump(DB::getQueryLog());
+});
+        
 Route::get('/', array('uses' => 'HomeController@showWelcome'));
 
 //Route::get('details/{bid?}', array( 'uses' => 'BeachController@details'));

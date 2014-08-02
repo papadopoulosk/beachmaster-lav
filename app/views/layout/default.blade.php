@@ -26,12 +26,5 @@
 
 </div>
 
-<!-- AngularJS Main file -->
-{{ HTML::script('scripts/angular.min.js') }}
-<!--{{ HTML::script('scripts/ui-bootstrap.js') }}-->
-
-<!-- Angular application file -->
-{{ HTML::script('scripts/myangular.js') }}
-
 </body>
 </html>

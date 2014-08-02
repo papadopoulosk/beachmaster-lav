@@ -7,12 +7,12 @@ class BeachController extends BaseController {
         
     public function index() {
         
-        $municipalities = municipality::select("municipalities.id",'municipalities.name','municipalities.prefecture_id')
+        $municipalities = municipality::remember(60)->select("municipalities.id",'municipalities.name','municipalities.prefecture_id')
                 ->leftJoin('beaches','municipalities.id','=','beaches.municipality_id')
                 ->where('beaches.approved','=','1')
                 ->distinct()->orderBy('name')->get();
         
-        $prefectures = prefecture::select("prefectures.id",'prefectures.name')
+        $prefectures = prefecture::remember(60)->select("prefectures.id",'prefectures.name')
                 ->leftJoin('beaches','prefectures.id','=','beaches.prefecture_id')
                 ->where('beaches.approved','=','1')
                 ->distinct()->orderBy('name')->get();
@@ -121,45 +121,66 @@ class BeachController extends BaseController {
         
         $queryA = "";
         $queryB = "";
-        if(Input::has('prefecture')){
+        if(Input::has('prefecture') && is_numeric(Input::get('prefecture'))){
             $prefecture = Input::get('prefecture');
             $queryA = ' AND beaches.prefecture_id = '.$prefecture.' ';
         }
-        if(Input::has('municipality')){
+        if(Input::has('municipality') && is_numeric(Input::get('municipality'))){
             $municipality = Input::get('municipality'); 
             $queryB = ' AND beaches.municipality_id = '.$municipality.' ';
         }
                 
         $whereClause = 'beaches.approved = 1'.$queryA.$queryB;
-
-        $beaches = DB::SELECT(
-            'SELECT beaches.id,
-                beaches.name,
-                beaches.description,
-                beaches.longitude,
-                beaches.latitude,
-                beaches.municipality_id,
-                beaches.prefecture_id,
-                img.imagePath,
-               r.review_count,
-               r.avg_rate
-            FROM beaches
-            LEFT JOIN (
-                SELECT DISTINCT beach_id, imagePath
-                FROM images
-                GROUP BY beach_id) img
-            ON img.beach_id = beaches.id
-            Left JOIN (
-                SELECT DISTINCT beachId, count(beachId) AS review_count,format(avg(reviews.rate),1) AS avg_rate
-                FROM reviews
-                GROUP BY beachId) r
-            on beaches.id = r.beachId
-            WHERE '.$whereClause.';');
-
+//        $beaches = DB::SELECT(
+//            'SELECT beaches.id,
+//                beaches.name,
+//                beaches.description,
+//                beaches.longitude,
+//                beaches.latitude,
+//                beaches.municipality_id,
+//                beaches.prefecture_id,
+//                img.imagePath,
+//               r.review_count,
+//               r.avg_rate
+//            FROM beaches
+//            LEFT JOIN (
+//                SELECT DISTINCT beach_id, imagePath
+//                FROM images
+//                GROUP BY beach_id) img
+//            ON img.beach_id = beaches.id
+//            Left JOIN (
+//                SELECT DISTINCT beachId, count(beachId) AS review_count,format(avg(reviews.rate),1) AS avg_rate
+//                FROM reviews
+//                GROUP BY beachId) r
+//            on beaches.id = r.beachId
+//            WHERE '.$whereClause.';');
+        
+        $beaches = beach::select(
+                'beaches.id',
+                'beaches.name',
+                'beaches.description',
+                'beaches.longitude',
+                'beaches.latitude',
+                'beaches.municipality_id',
+                'beaches.prefecture_id',
+                'images.imagePath',
+                DB::Raw('count(reviews.beachId) AS review_count'),
+                DB::Raw('format(avg(reviews.rate),1) AS avg_rate'))
+                ->leftJoin("images",function($join){
+                    $join->on('beaches.id','=','images.beach_id');
+                    //->GroupBy('images.beach_id');
+                })->leftJoin('reviews',function($join){
+                    $join->on('beaches.id','=','reviews.beachId');
+                })
+                ->GroupBy('beaches.id')
+                ->whereRaw($whereClause)
+                ->remember(5)
+                ->paginate(8);
+                
         if (count($beaches)<1){
             return $this->throwError();
         } else {
-            return json_encode($beaches);            
+            return $beaches->toJson();            
         }
       }
       

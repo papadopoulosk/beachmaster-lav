@@ -13,6 +13,7 @@ class CreateReportBeachTable extends Migration {
 	public function up()
 	{
             Schema::create('reportBeach',function($table){
+                $table->engine = "InnoDB";
                 $table->increments('id');
                 $table->integer('beach_id')->unsigned();
                 $table->foreign('beach_id')->references('id')->on('beaches');//->onDelete('cascade');
@@ -21,6 +22,7 @@ class CreateReportBeachTable extends Migration {
             });
             
             Schema::create('reportReview',function($table){
+                $table->engine = "InnoDB";
                 $table->increments('id');
                 $table->integer('review_id')->unsigned();
                 $table->foreign('review_id')->references('id')->on('reviews');//->onDelete('cascade');
@@ -29,6 +31,7 @@ class CreateReportBeachTable extends Migration {
             });
             
             Schema::create('reportImage',function($table){
+                $table->engine = "InnoDB";
                 $table->increments('id');
                 $table->integer('image_id')->unsigned();
                 $table->foreign('image_id')->references('id')->on('images');//->onDelete('cascade');

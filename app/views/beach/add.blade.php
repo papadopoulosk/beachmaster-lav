@@ -1,9 +1,9 @@
 @extends('layout.default')
 @section('content')
 
-<div class="row-fluid">
-    <h1>New Beaches - Step by step!</h1>
-    <div class="panel panel-info">
+<div class="row">
+    <h1>New Beach!</h1>
+    <div class="panel panel-info hidden-xs">
         <div class="panel-heading"><em>"How To"</em> guide - read or ignore</div>
         <div class="panel-body">
         <p>From here you can input and provide details for new beaches that you like and enjoy! All you have to do is follow the the instructions below! Go ahead!</p>
@@ -42,13 +42,14 @@
 
                     </div>    
                     <div id="recommendation" class="col-md-4 col-xs-12">
-                        <p class="well well-lg">%% content %%</p>
+                        <p class="hidden-xs well well-lg">%% content %%</p>
                     </div>
                    
                     <div class="col-md-4 col-xs-12">
                         <div ng-repeat='beach in neighbors' class="list-group">
-                            <a href="" class="list-group-item" data-toggle="modal" data-target="#myModal" ng-click="createModal(beach)">
-                                <p class="list-group-item-heading">%% beach.name %% - %% beach.description %%</p>
+                            <!-- Modal Triggered by "createModal" function through JS -->
+                            <a href="" class="list-group-item" data-toggle="modal" ng-click="createModal(beach)">
+                                <p class="list-group-item-heading">%% beach.name %% <span class="hidden-xs">- %% beach.description | limitTo: 30 %%...</span></p>
                             </a>
                         </div>
                     </div>
@@ -106,9 +107,17 @@
                         {{ Form::text ('name',Input::old('name'), array('class'=>'form-control','required'=>'true','placeholder'=>'Beach name')) }}
                     </div>
                    <div class="form-group">
-                        {{ Form::file ('imagePath',Input::old('imagePath'), array('class'=>'form-control')) }}
+                        <div class="fileUpload btn btn-primary">
+                    <span>Photo</span>
+                    <input type="file" id="imagePath" name="imagePath" class="upload" />
+                    <!--<p class="help-block">Upload a picture of the beach!</p>-->
+                    </div>
                         <p class="help-block">Upload a picture of the beach!</p>
                     </div>
+                    
+                    
+                    
+                    
                     <div class="form-group">
                         {{ Form::hidden ('latitude',Input::old('latitude'), array('id'=>'latitude','class'=>'form-control','required'=>'true','placeholder'=>'Geo Latitude')) }}
                     </div>
