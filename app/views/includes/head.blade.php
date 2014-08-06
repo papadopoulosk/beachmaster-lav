@@ -5,7 +5,7 @@
 
 <title>Beach Master</title>
 
-
+<meta name="_token" content="{{ csrf_token() }}" />
 
 <!-- Latest compiled and minified CSS -->
 <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">-->
@@ -28,6 +28,9 @@
 
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.20/angular.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.20/angular-animate.js"></script>
-{{ HTML::script('scripts/ui-bootstrap-tpls-0.11.0.min.js') }}
+
+<!-- AngularUI for pagination and typehead (bindHtml, position) ONLY. -->
+{{ HTML::script('scripts/ui-bootstrap-tpls-0.11.0-new.js') }}
+
 <!-- Angular application file -->
 {{ HTML::script('scripts/myangular.js') }}

@@ -14,8 +14,8 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="navbar-collapse-1">
       <ul class="nav navbar-nav">
-            <li><a href="/beach">Discover</a></li>
-            <li><a href="/beach/create">Add!</a></li>
+            <li {{ Request::is('beach') ? 'class="active"' : '' }}><a href="/beach">Discover</a></li>
+            <li {{ Request::is('beach/create') ? 'class="active"' : '' }}><a href="/beach/create">Add!</a></li>
 <!--        <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
@@ -28,14 +28,15 @@
       
       <ul class="nav navbar-nav navbar-right">
         <li>
-            <form class="navbar-form navbar-left" role="search">
+            <form class="navbar-form navbar-left" role="search" ng-controller="TypeaheadCtrl">
                 <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search">
+                    <input type="text" placeholder="Search by name" ng-model="selected" typeahead="name as name.name for name in names | filter:$viewValue | limitTo:8" class="form-control" typeahead-on-select="onSelect()">
+                    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
                 </div>
             </form>
         </li>  
-        <li><a href="/about">About</a></li>
-        <li><a href="/contact">Contact Us</a></li>
+        <li {{ Request::is('about') ? 'class="active"' : '' }} ><a href="/about">About</a></li>
+        <li {{ Request::is('contact') ? 'class="active"' : '' }}><a href="/contact">Contact Us</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">More<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
@@ -47,7 +48,7 @@
                 <li class=""><a href="/logout">Logout</a></li>
             @else
                 <li class="disabled"><a href="#">Register</a></li>
-                <li class=""><a href="/auth">Login</a></li>
+                <li class=""><a href="/login">Login</a></li>
             @endif
           </ul>
         </li>

@@ -1,7 +1,7 @@
 @extends('layout.default')
 @section('content')
 <div class="row-fluid">
-    <div class="col-md-9 col-sm-12">
+    <div class="col-md-8 col-md-offset-1 col-sm-12">
         <h1>BeachMaster</h1>
         <img src="/images/FirstPage.png" class="img-responsive img-rounded img-thumbnail" alt="description">
     </div>

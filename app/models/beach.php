@@ -37,6 +37,17 @@ class beach extends Eloquent {
         $validator = Validator::make($data,$rules);
         return $validator->passes();
     }
+    
+    public function getNames(){
+        $names = array();
+        $temp = $this::select("id","name")->remember(15)->get()->toArray();
+        foreach($temp as $key => $value){
+            //print_r($value);
+            array_push($names, $value);
+        }
+        //print_r($names);
+        return json_encode($names);
+    }
 }
 
 ?>

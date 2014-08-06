@@ -145,8 +145,9 @@ body { padding-top: 60px; }
     }
 
     .mapCentral{
-        width: 80%;
-        height: 350px;
+        width: 75%;
+        height: 450px;
+        border-radius: 5px 5px;
     }
 
     .mapSecondary {
@@ -157,6 +158,10 @@ body { padding-top: 60px; }
     
     .caption{
         padding:2px;
+    }
+    
+    .container{
+        width: 95%;
     }
 }
 

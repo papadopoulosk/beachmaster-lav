@@ -5,7 +5,7 @@
           <div class="sidebar-module">
             <h4>Useful links</h4>
             <ol class="list-unstyled">
-              <li><a href="#">Login</a></li>
+              <li><a href="/login">Login</a></li>
               <li><a href="#">Register</a></li>
               <li><a href="/beach/create">New beach</a></li>
               <li><a href="/beach">Discover</a></li>

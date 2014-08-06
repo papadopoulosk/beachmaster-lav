@@ -5,28 +5,19 @@
     <h3>Discover places to visit and beaches to enjoy!</h3>
 </div>
 <div class="row">
-    <div id="map" class="col-md-8 col-md-offset-1 mapCentral"></div>    
+    <div id="map" class="col-md-7 mapCentral"></div>    
 </div>
 <div  id="beachContent" ng-controller="beachController">
 <div class="row mainFilterBar">
 
     <!-- Template for Angular view -->
     <div class="col-xs-12 col-md-3">
-        <pagination total-items="totalItems" max-size="4" previous-text="<<" next-text=">>" ng-model="currentPage" ng-change="pageChanged()"></pagination>
-        <!--<input type="search" id="searchFilter" class="form-control" placeholder="Search for beaches" ng-model="beachFilter">-->
+        <pagination total-items="totalItems" ng-model="currentPage" class="pagination" max-size="maxSize" items-per-page="numPerPage" previous-text="&lsaquo;&lsaquo;" next-text="&rsaquo;&rsaquo;" ng-change="pageChanged()"></pagination>
     </div>
     <div class="col-xs-12 col-md-3">
         <pre>Total results: %% totalItems %%</pre>
     </div>
-<!--    <div class="col-xs-12 col-md-2">
-        <select class="form-control" ng-model="orderAttr">
-            <option value="name">Alphabetical</option>
-            <option value="avg_rate">Rate</option>
-            <option value="review_count">Number of reviews</option>
-        </select>
-    </div>-->
-    
-    <div class="col-xs-12 col-md-2">
+    <div class="col-xs-12 col-md-3">
         <div>
             <select class="form-control nullable" ng-model="prefecture"  ng-change="updatePrefecture()">
                     <option value="">--Prefecture--</option>
@@ -37,13 +28,13 @@
         </div>
     </div>
     
-    <div class="col-xs-12 col-md-2">
+    <div class="col-xs-12 col-md-3">
         <div class="">
-            <select class="form-control nullable" ng-model="municipality"  ng-change="updateMunicipality()">
+            <select class="form-control nullable" ng-model="municipality" ng-options="municipality.id as municipality.name for municipality in municipalities" ng-change="updateMunicipality()">
                     <option value="">--Municipality--</option>
-                @foreach ($municipalities as $municipality)
-                    <option value="{{ $municipality['id'] }}">{{ $municipality['name'] }}</option>
-                @endforeach
+                <!--@foreach ($municipalities as $municipality)-->
+                    <!--<option value="%% municipality.id %%"></option>-->
+                <!--@endforeach-->
             </select>
         </div>
     </div>

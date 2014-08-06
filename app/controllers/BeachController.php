@@ -12,11 +12,18 @@ class BeachController extends BaseController {
                 ->where('beaches.approved','=','1')
                 ->distinct()->orderBy('name')->get();
         
-        $prefectures = prefecture::remember(60)->select("prefectures.id",'prefectures.name')
-                ->leftJoin('beaches','prefectures.id','=','beaches.prefecture_id')
+//        $prefectures = prefecture::select("prefectures.id",DB::Raw("concat(prefectures.name,' -(',count(beaches.id),')') as name"))
+//                ->leftJoin('beaches','prefectures.id','=','beaches.prefecture_id')
+//                ->where('beaches.approved','=','1')
+//                ->distinct()->orderBy('prefectures.name')->get();
+
+        $prefectures = beach::select("prefectures.id",DB::raw('concat(prefectures.name," - (",count(beaches.id),")") as name'))
+                ->leftjoin('prefectures',function($join){
+                    $join->on('prefectures.id','=','beaches.prefecture_id');
+                })->groupby('beaches.prefecture_id')
                 ->where('beaches.approved','=','1')
-                ->distinct()->orderBy('name')->get();
-        
+                ->get();
+
         return View::make('beach.index')
                 ->with('municipalities',$municipalities->toArray())
                 ->with('prefectures',$prefectures->toArray());
@@ -119,11 +126,32 @@ class BeachController extends BaseController {
         //Initial call of beaches for main page.
         //Generate a JSON list for display purposes - API call through AngularJS
         
+        
         $queryA = "";
         $queryB = "";
         if(Input::has('prefecture') && is_numeric(Input::get('prefecture'))){
             $prefecture = Input::get('prefecture');
             $queryA = ' AND beaches.prefecture_id = '.$prefecture.' ';
+            
+            $activeMunicipalities = beach::
+                    select("beaches.municipality_id as id",DB::raw("count(beaches.id) as countOfBeaches"),DB::RAW("CONCAT(municipalities.name,' - (',count(beaches.id),')') as name"))
+                    ->leftjoin('municipalities',function($join){
+                        $join->on('beaches.municipality_id','=','municipalities.id');
+                    })
+                    ->where("beaches.prefecture_id",'=',$prefecture)
+                    ->where('beaches.approved','=','1')
+                    ->groupBy('beaches.municipality_id')
+                    ->get();
+        } else {
+            $activeMunicipalities = beach::
+                    select("beaches.municipality_id as id",DB::raw("count(beaches.id) as countOfBeaches"),DB::RAW("CONCAT(municipalities.name,' - (',count(beaches.id),')') as name"))
+                    ->leftjoin('municipalities',function($join){
+                        $join->on('beaches.municipality_id','=','municipalities.id');
+                    })
+                    //->where("beaches.prefecture_id",'=',$prefecture)
+                    ->where('beaches.approved','=','1')
+                    ->groupBy('beaches.municipality_id')
+                    ->get();
         }
         if(Input::has('municipality') && is_numeric(Input::get('municipality'))){
             $municipality = Input::get('municipality'); 
@@ -131,29 +159,32 @@ class BeachController extends BaseController {
         }
                 
         $whereClause = 'beaches.approved = 1'.$queryA.$queryB;
-//        $beaches = DB::SELECT(
-//            'SELECT beaches.id,
-//                beaches.name,
-//                beaches.description,
-//                beaches.longitude,
-//                beaches.latitude,
-//                beaches.municipality_id,
-//                beaches.prefecture_id,
-//                img.imagePath,
-//               r.review_count,
-//               r.avg_rate
-//            FROM beaches
-//            LEFT JOIN (
-//                SELECT DISTINCT beach_id, imagePath
-//                FROM images
-//                GROUP BY beach_id) img
-//            ON img.beach_id = beaches.id
-//            Left JOIN (
-//                SELECT DISTINCT beachId, count(beachId) AS review_count,format(avg(reviews.rate),1) AS avg_rate
-//                FROM reviews
-//                GROUP BY beachId) r
-//            on beaches.id = r.beachId
-//            WHERE '.$whereClause.';');
+        
+        /**$beaches = DB::SELECT(
+            'SELECT beaches.id,
+                beaches.name,
+                beaches.description,
+                beaches.longitude,
+                beaches.latitude,
+                beaches.municipality_id,
+                beaches.prefecture_id,
+                img.imagePath,
+               r.review_count,
+               r.avg_rate
+            FROM beaches
+            LEFT JOIN (
+                SELECT DISTINCT beach_id, imagePath
+                FROM images
+                GROUP BY beach_id) img
+            ON img.beach_id = beaches.id
+            Left JOIN (
+                SELECT DISTINCT beachId, count(beachId) AS review_count,format(avg(reviews.rate),1) AS avg_rate
+                FROM reviews
+                GROUP BY beachId) r
+            on beaches.id = r.beachId
+            WHERE '.$whereClause.';');
+         * 
+         */
         
         $beaches = beach::select(
                 'beaches.id',
@@ -176,11 +207,15 @@ class BeachController extends BaseController {
                 ->whereRaw($whereClause)
                 ->remember(5)
                 ->paginate(8);
-                
+        $b = $beaches->toArray();
+        if (isset($activeMunicipalities)){
+            $b['activeMunicipalities']= $activeMunicipalities->toArray();
+        }
+        //print_r(JSON_encode($b));
         if (count($beaches)<1){
             return $this->throwError();
         } else {
-            return $beaches->toJson();            
+            return json_encode($b);
         }
       }
       
@@ -202,6 +237,7 @@ class BeachController extends BaseController {
     }
     
     public function updateDescription(){
+        
         $data = Input::all();
         if (Input::has('description') && Input::has('id') && is_numeric(Input::get('id'))){
             $description = $data['description'];
@@ -218,9 +254,6 @@ class BeachController extends BaseController {
         } else {
             return $this->throwError();
         }
-        
-        
-        
     }
     
     public function neighbors(){
@@ -261,42 +294,47 @@ class BeachController extends BaseController {
         }
     }
     
-    public function rateup(){
-        $beachId = Input::get("beachId");
-        $beach = beach::find($beachId);
-        if (!is_null($beach)){
-            $newBeach = $this->rate(1, $beach);
-            $newBeach->save();
-            return $newBeach->rate;
-        } else {
-            return $this->throwError();
-        }
+    public function getNames(){
+        $beach = new beach;
+        $names = $beach->getNames();
+        return $names;
     }
-    
-    public function ratedown($beachId = null){
-        $beachId = Input::get("beachId");
-        $beach = beach::find($beachId);
-        if (!is_null($beach)){
-            $newBeach = $this->rate(-1, $beach);
-            $newBeach->save();
-            return $newBeach->rate;
-        } else {
-            return $this->throwError();
-        }
-    }
-    
-    private function rate($rate,$beach){
-        $tempRate = $beach->rate;
-        $tempTotalRates = $beach->votes;
-            
-        $newRate = (($tempTotalRates * $tempRate) + $rate) / ($tempTotalRates +1);
-        $newTotalRates = $tempTotalRates + 1;
-            
-        $beach->rate = $newRate;
-        $beach->votes = $newTotalRates; //votes = rates at this point
-            
-        return $beach;
-    }
+//    public function rateup(){
+//        $beachId = Input::get("beachId");
+//        $beach = beach::find($beachId);
+//        if (!is_null($beach)){
+//            $newBeach = $this->rate(1, $beach);
+//            $newBeach->save();
+//            return $newBeach->rate;
+//        } else {
+//            return $this->throwError();
+//        }
+//    }
+//    
+//    public function ratedown($beachId = null){
+//        $beachId = Input::get("beachId");
+//        $beach = beach::find($beachId);
+//        if (!is_null($beach)){
+//            $newBeach = $this->rate(-1, $beach);
+//            $newBeach->save();
+//            return $newBeach->rate;
+//        } else {
+//            return $this->throwError();
+//        }
+//    }
+//    
+//    private function rate($rate,$beach){
+//        $tempRate = $beach->rate;
+//        $tempTotalRates = $beach->votes;
+//            
+//        $newRate = (($tempTotalRates * $tempRate) + $rate) / ($tempTotalRates +1);
+//        $newTotalRates = $tempTotalRates + 1;
+//            
+//        $beach->rate = $newRate;
+//        $beach->votes = $newTotalRates; //votes = rates at this point
+//            
+//        return $beach;
+//    }
     
     public function suggest($bid = null){
         $approve_limit = 5;

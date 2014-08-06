@@ -1,12 +1,11 @@
 var beachApp = angular.module("beachApp",['ngAnimate', 'ui.bootstrap']);
-//var beachApp = angular.module('beachApp', ['ui.bootstrap']);
 
 beachApp.config(function($interpolateProvider) {
   $interpolateProvider.startSymbol('%%');
   $interpolateProvider.endSymbol('%%');
 });
 
-function beachController($scope, $http, $location){
+function beachController($scope, $http){
     var markers = [];
 
     $scope.prefecture;
@@ -19,9 +18,6 @@ function beachController($scope, $http, $location){
     $scope.numPerPage = 8;
     
     $scope.currentPage = 1;
-    $scope.bigCurrentPage = 1;
-    
-    $scope.bigTotalItems = 0;
     $scope.totalItems = 0;
     $scope.maxSize = 5;
     
@@ -37,15 +33,16 @@ function beachController($scope, $http, $location){
     //Update municipality
     $scope.updateMunicipality = function(){
        prefecture = $scope.prefecture;
-       municipality = $scope.municipality;
+       municipality_id = $scope.municipality;
        
        $scope.currentPage = 1;
-       loadBeaches(prefecture,municipality);
+//       console.log(municipality);
+       loadBeaches(prefecture,municipality_id);
+       //$scope.municipality = municipality.municipality_id;
     };
 
     var loadBeaches = function(prefecture,municipality, page){
         $("#map").gmap3({clear:markers});
-        //$scope.beaches = "";
         if(typeof(prefecture)==='undefined') prefecture = "";
         if(typeof(municipality)==='undefined') municipality = "";
         if(typeof(page)==='undefined') page = "";
@@ -59,15 +56,15 @@ function beachController($scope, $http, $location){
         if(page!=="" && page!==null){
                 url = url+'&page='+page;
         }
-        console.log(url);        
-        
         
         $http({method: 'GET', url: url})
-                .success(function(fullData, status, headers, config) {
+                .success(function(fullData, status, headers, config)
+        {
             if (fullData!==false){
                 data = fullData.data;
+                $scope.municipalities = fullData.activeMunicipalities;
+                
                 $scope.totalItems = fullData.total;
-                $scope.bigTotalItems = fullData.total;;
                 markers = data;
                 $scope.beaches = data;
                 var counter = 0;
@@ -82,16 +79,19 @@ function beachController($scope, $http, $location){
                 }
                $scope.orderAttr='name'; 
                  //Custom function to Initiate Gmap plugin
+                $("#map").gmap3({clear:markers});
                 initGmap(values);
                 //$('#beachContent').fadeIn('slow');
             }
-        }).error(function() {
+        }).error(function()
+        {
 //          $scope.error = 'No beaches found! :-(';
           $scope.beaches = '';
           $scope.totalItems = 0;
+          //$scope.bigTotalItems = 0;
         });
-        
     };
+    
     loadBeaches();
     
     $scope.setPage = function (pageNo) {
@@ -100,7 +100,7 @@ function beachController($scope, $http, $location){
     };
 
     $scope.pageChanged = function() {
-      console.log('Page changed to: ' + $scope.currentPage);
+      //console.log('Page changed to: ' + $scope.currentPage);
       loadBeaches($scope.prefecture,$scope.municipality, $scope.currentPage);
     };  
 }
@@ -255,6 +255,20 @@ function imageController ($scope, $http){
     };
 }
 
+function TypeaheadCtrl ($scope, $http, $location){
+  $scope.names = '';
+  
+   $http.get('/api/v1/beach/names').then(function (response) {
+        responseData = response.data;
+        $scope.names = response.data;
+    });
+  
+  $scope.onSelect = function(){
+      $location.path("beach/"+$scope.selected.id);
+      window.location.replace("/beach/"+$scope.selected.id);
+  };
+}
+
 function reviewController($scope, $filter, $http){
     var loadReviews = function(beach){
         $scope.reportStatus = 'Report';
@@ -291,6 +305,7 @@ function reviewController($scope, $filter, $http){
         });
     };
 }
+
 //Gmap plugin in Home page
 //Initiated through AngularJS call
 function initGmap(dataValues){
@@ -308,6 +323,7 @@ function initGmap(dataValues){
                     click: function(marker, event, context){
                         var name="";  
                         var map = $(this).gmap3("get");
+                        console.log(context);
                         $("#searchFilter").val(context.data);
                         $("#searchFilter").trigger('input');
                     },

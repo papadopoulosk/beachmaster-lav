@@ -15,7 +15,16 @@ Event::listen('illuminate.query', function($query){
 //    var_dump($query);
 //    var_dump(DB::getQueryLog());
 });
-        
+     
+Route::get('csv',function(){
+   $file = fopen(public_path().'/Beaches2.csv', 'r');
+        while (($line = fgetcsv($file)) !== FALSE) {
+        //$line is an array of the csv elements
+        print_r($line);
+    }
+    fclose($file); 
+});
+
 Route::get('/', array('uses' => 'HomeController@showWelcome'));
 
 //Route::get('details/{bid?}', array( 'uses' => 'BeachController@details'));
@@ -28,6 +37,7 @@ Route::get('/report/beach/{bid}',array('uses'=> 'ReportController@beach'));
 Route::get('/report/review/{bid}',array('uses'=> 'ReportController@review'));
 Route::get('/report/image/{bid}',array('uses'=> 'ReportController@image'));
 Route::get('/logout','AuthController@destroy');
+Route::get('/login','AuthController@index');
 
 Route::resource('beach','BeachController');
 Route::resource('municipality','MunicipalityController');
@@ -49,6 +59,7 @@ Route::group(
             ),
         function(){
             Route::get('beach/all/','BeachController@beaches');
+            Route::get('beach/names','BeachController@getNames');
             //Route::get('beach/{bid}','BeachController@beach');
             Route::get('review/{bid?}','ReviewController@review');
             Route::get('beach/neighbors','BeachController@neighbors');
