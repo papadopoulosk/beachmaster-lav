@@ -16,22 +16,17 @@ Event::listen('illuminate.query', function($query){
 //    var_dump(DB::getQueryLog());
 });
      
-Route::get('csv',function(){
-   $file = fopen(public_path().'/Beaches2.csv', 'r');
-        while (($line = fgetcsv($file)) !== FALSE) {
-        //$line is an array of the csv elements
-        print_r($line);
-    }
-    fclose($file); 
-});
+//Route::get('csv',function(){
+//   $file = fopen(public_path().'/Beaches2.csv', 'r');
+//        while (($line = fgetcsv($file)) !== FALSE) {
+//        //$line is an array of the csv elements
+//        print_r($line);
+//    }
+//    fclose($file); 
+//});
 
 Route::get('/', array('uses' => 'HomeController@showWelcome'));
-
-//Route::get('details/{bid?}', array( 'uses' => 'BeachController@details'));
-
-//Route::get('suggest/{bid?}', array( 'uses' => 'BeachController@suggest'));
-
-//Route::get('add',array('uses'=> 'BeachController@add'));
+Route::get('/auth/callback','AuthController@oauth2callback');
 
 Route::get('/report/beach/{bid}',array('uses'=> 'ReportController@beach'));
 Route::get('/report/review/{bid}',array('uses'=> 'ReportController@review'));

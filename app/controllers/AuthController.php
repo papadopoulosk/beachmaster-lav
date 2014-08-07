@@ -45,6 +45,10 @@ class AuthController extends \BaseController {
 		Auth::logout();
                 Return Redirect::to('/')->with('message','Successfully logged out');
 	}
+        
+        public function oauth2callback(){
+            
+        }
 
 
 }

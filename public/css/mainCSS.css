@@ -29,6 +29,16 @@ body { padding-top: 60px; }
     margin-top: 5px;
 }
 
+.grayscale {
+    -webkit-filter: grayscale(0.9);
+    filter: grayscale(0.9);
+}
+
+div.thumbnail:hover * .grayscale {
+    -webkit-filter: grayscale(0);
+    filter: grayscale(0);
+}
+
 .animate-repeat {
   line-height:40px;
   list-style:none;

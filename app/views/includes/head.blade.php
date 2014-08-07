@@ -14,6 +14,9 @@
 <!-- Main CSS file for custom changes -->
 {{ HTML::style('css/mainCSS.css') }}
 
+<!-- CSS file for process flow in beach creation -->
+{{ HTML::style('css/font-awesome.min.css') }}
+
 <!-- Jquery Plugin -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
