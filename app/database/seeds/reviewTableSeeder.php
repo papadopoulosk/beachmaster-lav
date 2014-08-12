@@ -18,7 +18,8 @@ class reviewTableSeeder extends Seeder {
             DB::table('reviews')->insert(
             array(
                 'beachId' => $faker->numberBetween(1, 150),
-                'title'  => $faker->sentence(4),
+                //'title'  => $faker->sentence(4),
+                'submitted_by' => $faker->numberBetween(1, 3),
                 'text'   => $faker->sentence(15),
                 'rate' => $faker->numberBetween(1, 5),
                 'created_at' => Date("Y-m-d H:i:s"),

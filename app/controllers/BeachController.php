@@ -33,13 +33,30 @@ class BeachController extends BaseController {
         if (is_null($bId)) {
             $bId = Input::get("bid");
         }
-        $beach = beach::find($bId);
+        if (is_numeric($bId)) {
+            $beach = beach::find($bId);
+        } elseif (is_string($bId)) {
+
+            $beach = beach::where('slug', $bId)->first();
+        }
+        //dd($beach->id);
+        //bId and ownerid are integer after this point
+        $bId = $beach->id;
+        $ownerId = $beach->submitted_by;
+
         $reviews = review::where('beachId', $bId)->get();
 
         $utility = new utility($bId);
         $utility = $utility->getUtilities(); //utility::where('beach_id',1)->get();
 
         $images = $beach->images->toArray();
+        foreach ($images as $key => $image) {
+            $name = user::select('name')->where('id', '=', $image['submitted_by'])->limit(1)->get()->toArray()[0]['name'];
+            $images[$key]['owner'] = [ 'userid' => $image['submitted_by'], 'name'=>$name];
+        }
+        //dd($images);
+
+        $beachOwner = user::select('id', 'name')->where('id', '=', $ownerId)->get()->toArray();
 
         if (is_null($beach)) {
             return Redirect::to('/')->with('message', "No results returned. Please try again.");
@@ -48,7 +65,8 @@ class BeachController extends BaseController {
                             ->with('beach', $beach->toArray())
                             ->with('reviews', $reviews->toArray())
                             ->with('utility', $utility)
-                            ->with('images', $images); //->toArray());  
+                            ->with('images', $images) //->toArray());  
+                            ->with('beachOwner', $beachOwner);
         }
     }
 
@@ -61,8 +79,8 @@ class BeachController extends BaseController {
         $beach = new beach;
 
         $data = Input::all();
-
-        if ($beach->validate($data)) {
+        $validationResults = $beach->validate($data);
+        if ($validationResults === true) {
             $prefecture = prefecture::firstOrNew(array('name' => $data['prefecture']));
             $prefecture->name = $data['prefecture'];
             $prefecture->save();
@@ -75,6 +93,7 @@ class BeachController extends BaseController {
             //$file = $data['imagePath'];
 
             $beach->name = $data['name'];
+            $beach->slug = Str::slug($data['name']);
             $beach->description = $data['description'];
             $beach->latitude = $data['latitude'];
             $beach->longitude = $data['longitude'];
@@ -82,6 +101,7 @@ class BeachController extends BaseController {
             $beach->approved = 0;
             $beach->prefecture_id = $prefecture->id;
             $beach->municipality_id = $municipality->id;
+            $beach->submitted_by = Auth::id();
             //Save new beach to the database
             $beach->save();
 
@@ -92,10 +112,16 @@ class BeachController extends BaseController {
                 if ($path) {
                     $image->beach_id = $beach->id;
                     $image->imagePath = $path;
+                    $image->submitted_by = Auth::id();
                     $image->save();
                 } else {
                     $error = true;
                 }
+            } else {
+                return Redirect::to('/beach/create')->with('message', 'Missing image');
+//                $image->beach_id = $beach->id;
+//                $image->imagePath = $path;
+//                $image->save();
             }
 
             $utility = new utility; //utility::firstOrCreate(array('beach_id'=>$beach->id)); //new utility($beach->id);
@@ -106,8 +132,7 @@ class BeachController extends BaseController {
             return Redirect::to('/beach/create')->with('message', 'Beach has been submitted for approval');
         } else {
             //Generate error message and forward them to View
-            $errors = $validator->messages();
-            return Redirect::to('/beach/create')->withErrors($errors);
+            return Redirect::to('/beach/create')->withErrors($validationResults);
         }
     }
 
@@ -160,7 +185,7 @@ class BeachController extends BaseController {
         $whereClause = 'beaches.approved = 1' . $queryA . $queryB;
 
         $beaches = beach::select(
-                        'beaches.id', 'beaches.name', 'beaches.description', 'beaches.longitude', 'beaches.latitude', 'beaches.municipality_id', 'beaches.prefecture_id', 'images.imagePath', DB::Raw('count(reviews.beachId) AS review_count'), DB::Raw('format(avg(reviews.rate),1) AS avg_rate'))
+                        'beaches.id', 'beaches.slug', 'beaches.name', 'beaches.description', 'beaches.longitude', 'beaches.latitude', 'beaches.municipality_id', 'beaches.prefecture_id', 'images.imagePath', DB::Raw('count(reviews.beachId) AS review_count'), DB::Raw('format(avg(reviews.rate),1) AS avg_rate'))
                 ->leftJoin("images", function($join) {
                     $join->on('beaches.id', '=', 'images.beach_id');
                     //->GroupBy('images.beach_id');
@@ -264,43 +289,45 @@ class BeachController extends BaseController {
         return $names;
     }
 
-//    public function rateup(){
-//        $beachId = Input::get("beachId");
-//        $beach = beach::find($beachId);
-//        if (!is_null($beach)){
-//            $newBeach = $this->rate(1, $beach);
-//            $newBeach->save();
-//            return $newBeach->rate;
-//        } else {
-//            return $this->throwError();
-//        }
-//    }
-//    
-//    public function ratedown($beachId = null){
-//        $beachId = Input::get("beachId");
-//        $beach = beach::find($beachId);
-//        if (!is_null($beach)){
-//            $newBeach = $this->rate(-1, $beach);
-//            $newBeach->save();
-//            return $newBeach->rate;
-//        } else {
-//            return $this->throwError();
-//        }
-//    }
-//    
-//    private function rate($rate,$beach){
-//        $tempRate = $beach->rate;
-//        $tempTotalRates = $beach->votes;
-//            
-//        $newRate = (($tempTotalRates * $tempRate) + $rate) / ($tempTotalRates +1);
-//        $newTotalRates = $tempTotalRates + 1;
-//            
-//        $beach->rate = $newRate;
-//        $beach->votes = $newTotalRates; //votes = rates at this point
-//            
-//        return $beach;
-//    }
+    /**
+      public function rateup(){
+      $beachId = Input::get("beachId");
+      $beach = beach::find($beachId);
+      if (!is_null($beach)){
+      $newBeach = $this->rate(1, $beach);
+      $newBeach->save();
+      return $newBeach->rate;
+      } else {
+      return $this->throwError();
+      }
+      }
 
+      public function ratedown($beachId = null){
+      $beachId = Input::get("beachId");
+      $beach = beach::find($beachId);
+      if (!is_null($beach)){
+      $newBeach = $this->rate(-1, $beach);
+      $newBeach->save();
+      return $newBeach->rate;
+      } else {
+      return $this->throwError();
+      }
+      }
+
+      private function rate($rate,$beach){
+      $tempRate = $beach->rate;
+      $tempTotalRates = $beach->votes;
+
+      $newRate = (($tempTotalRates * $tempRate) + $rate) / ($tempTotalRates +1);
+      $newTotalRates = $tempTotalRates + 1;
+
+      $beach->rate = $newRate;
+      $beach->votes = $newTotalRates; //votes = rates at this point
+
+      return $beach;
+      }
+     */
+    
     public function suggest($bid = null) {
         $approve_limit = 5;
         if (!is_null($bid)) {

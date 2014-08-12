@@ -16,6 +16,8 @@ class CreateBeachesTable extends Migration {
                 $table->engine = "InnoDB";
                 $table->increments('id');
                 $table->string('name');
+                $table->string('slug');
+                $table->index('slug');
                 $table->text('description');
                 $table->boolean('approved')->default(false);
                 $table->index('approved');
@@ -30,6 +32,7 @@ class CreateBeachesTable extends Migration {
                 $table->foreign('municipality_id')->references('id')->on('municipalities');//->onDelete('cascade');  
                 //$table->index('municipality_id');
                 $table->tinyInteger('report')->default(0);
+                $table->integer('submitted_by')->references('id')->on('users');
                 $table->timestamps();
             });
 	}

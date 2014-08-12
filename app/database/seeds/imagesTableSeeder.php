@@ -19,6 +19,7 @@ class imagesTableSeeder extends Seeder {
             $table->insert(array(
             'beach_id' => $x+1,
             'imagePath'=> $faker->imageUrl(900, 500, 'nature'),//'/images/uploads/default.jpg',
+            'submitted_by'=>$faker->numberBetween(1, 3),
             'created_at' => Date("Y-m-d H:i:s"),
             'updated_at' => Date("Y-m-d H:i:s")
             ));

@@ -1,4 +1,4 @@
 @extends('layout.default')
 @section('content')
-	{{ URL::full() }}
+{{ URL::full() }}
 @stop

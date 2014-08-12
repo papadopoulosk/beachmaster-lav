@@ -1,6 +1,7 @@
 @extends('layout.default')
 @section('content')
 
+@if (Auth::check())
 <div class="row">
     <h1>{{ trans('menu.newBeach')}}</h1>
     <div class="panel panel-info hidden-xs">
@@ -22,11 +23,23 @@
     </div>
 </div>
 
-<div class="row">
+<div id="beachCreationMenu" class="row-fluid">
 
     <!-- Steps Progress and Details - START -->
-    <div class="container" style="">
-
+    <div class="row-fluid" style="">
+        {{ Form::open(array(
+            'method'=>'post', 
+            'url' => '/beach',
+            'role'=>'form',
+            'files'=>'true'
+    )) }} 
+        <div class="row-fluid">
+            <div class="col-xs-12">
+                @foreach($errors->all() as $message)
+                <p class="alert alert-warning">{{ $message}}</p>
+                @endforeach
+            </div>
+        </div>
         <div class="row">
             <div class="row step">
                 <div id="div1" class="col-md-3 col-xs-3 substep activestep" onclick="javascript: resetActive(event, 0, 'step-1');">
@@ -49,22 +62,18 @@
 
             </div>
         </div>
-        <!--        <div class="row">
-                    <div class="progress" id="progress1">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                        </div>
-                        <span class="progress-type">Progress</span>
-                        <span class="progress-completed">20%</span>
-                    </div>
-                </div>-->
-        {{ Form::open(array(
-            'method'=>'post', 
-            'url' => '/beach',
-            'role'=>'form',
-            'files'=>'true'
-    )) }} 
+        <div class="row">
+            <div class="progress" id="progress1">
+                <div class="progress-bar" role="progressbar" aria-valuenow="00" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                </div>
+                <span class="progress-type">Progress</span>
+                <!--<span class="progress-completed">20%</span>-->
+            </div>
+        </div>
 
-        <div class="row setup-content step activeStepInfo" id="step-1">
+
+
+        <div class="row-fluid setup-content step activeStepInfo" id="step-1">
             <div class="col-xs-12">
                 <div class="col-md-12 well" ng-controller="recommendationController">
                     <div class="panel-body">
@@ -119,15 +128,11 @@
                 </div>
             </div>
         </div>
-        <div class="row setup-content step hiddenStepInfo " id="step-2">
+        <div class="row-fluid setup-content step hiddenStepInfo " id="step-2">
             <div class="col-xs-12">
                 <div class="col-md-12 well">
                     <div class="panel-body">
                         <div class="col-md-4">
-                            @foreach($errors->all() as $message)
-                            <p class="alert alert-warning">{{ $message}}</p>
-                            @endforeach
-
                             <div class="form-group">
                                 {{ Form::text ('name',Input::old('name'), array('class'=>'form-control','required'=>'true','placeholder'=> trans('menu.beachName') )) }}
                             </div>
@@ -161,7 +166,7 @@
                 </div>
             </div>
         </div>
-        <div class="row setup-content step hiddenStepInfo" id="step-3">
+        <div class="row-fluid setup-content step hiddenStepInfo" id="step-3">
             <div class="col-xs-12">
                 <div class="col-md-12 well text-center">
                     <div class="panel-body">
@@ -263,19 +268,21 @@
                                     </label>
                                 </div>
                             </div>
+                            <div><p>
+                                    <small>Note: If you leave an option unchecked, we will assume that the utility is not offered!</small></p></div>
                         </div> 
 
                         <div class="col-md-3 text-left">
-                            <p>In case you want to suggest additional options, <a href="/contact" title="Contact" >lets us know!</a></p>
+                            <p>In case you want to suggest additional options, <a href="/contact" title="Contact" >let us know!</a></p>
                         </div>
                     </div> 
                 </div>
             </div>
         </div>
-        <div class="row setup-content step hiddenStepInfo" id="step-4">
+        <div class="row-fluid setup-content step hiddenStepInfo" id="step-4">
             <div class="col-xs-12">
                 <div class="col-md-12 well text-center">
-                    <p class="">If you think, everything is ok, then complete the process!
+                    <p class="">If you are ready, then complete the process!
                         {{ Form::submit(trans('menu.submit'), array('class'=>'btn btn-success')) }}
                     </p>       
                 </div>
@@ -434,5 +441,15 @@
 
 
 </div>
-
+@else
+<div class="row">
+    <h1>{{ trans('menu.newBeach')}}</h1>
+    <div class="panel panel-info hidden-xs">
+        <div class="panel-heading">{{ trans('menu.howTo')}}</div>
+        <div class="panel-body">
+            <p>You need to <a href='/login' title="login">login</a> to Beachmaster in order to submit new beaches!</p>    
+        </div>
+    </div>
+</div>
+@endif
 @stop

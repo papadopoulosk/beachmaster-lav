@@ -2,7 +2,7 @@
 @section('content')
 <div class="row-fluid">
     <div class="col-md-9 col-sm-12">
-        <h1>BeachMaster</h1>
+        <h1>{{ trans('menu.beachmasterBrand') }}</h1>
         <div class="jumbotron">
         
         <p class="label label-info">Under maintenance <span class="glyphicon glyphicon-wrench"></span></p>

@@ -19,6 +19,7 @@ class CreateImagesTable extends Migration {
                     $table->foreign('beach_id')->references('id')->on('beaches')->onDelete('cascade');
                     $table->string('imagePath');
                     $table->tinyInteger('report')->default(0);
+                    $table->integer('submitted_by')->references('id')->on('users');
                     $table->timestamps();
                 });
 	}

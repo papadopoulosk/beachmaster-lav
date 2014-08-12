@@ -3,13 +3,13 @@
 <meta name="author" content="Konstantinos Papadopoulos">
 <meta name=viewport content="width=device-width, initial-scale=1">
 
-<title>Beach Master</title>
+<title>{{ trans('menu.beachmasterBrand') }}</title>
 
 <meta name="_token" content="{{ csrf_token() }}" />
 
 <!-- Latest compiled and minified CSS -->
 <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">-->
-{{ HTML::style('css/bootstrap.min.css') }}
+{{ HTML::style('css/bootstrap-cerulian.min.css') }}
 
 <!-- Main CSS file for custom changes -->
 {{ HTML::style('css/mainCSS.css') }}

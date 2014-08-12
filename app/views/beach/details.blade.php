@@ -4,15 +4,19 @@
 <div class="row">
     <!-- Nav tabs -->
     <div class="row-fluid" ng-controller="singleBeachController">
+        @if(!Auth::check())
+        <p><a href='/login' title="login" class="btn btn-success">Login to edit the description, utilities and upload new photos!</a></p>
+        @endif
         <div class="col-md-12 well well-sm">
             <p class="pull-right"><a class="report" ng-click="reportBeach({{ $beach['id']}})" href="">%% reportStatus %% </a></p>
-
-            <h2>{{{ $beach['name']}}}&nbsp; <button ng-show="!showEditForm" type="button" class="btn btn-default btn-sm" ng-click="editable()"><span class="glyphicon glyphicon-pencil"></span></button></h2>
+            <h2>{{{ $beach['name']}}}&nbsp; 
+                @if (Auth::check())
+                <button ng-show="!showEditForm" type="button" class="btn btn-default btn-sm" ng-click="editable()"><span class="glyphicon glyphicon-pencil"></span></button>
+                @endif
+            </h2>
+            <p class="report"><a href='/profile/{{ $beachOwner[0]['id'] }}' title="See user's activity">By {{ $beachOwner[0]['name']}}</a></p>
             <p ng-show="!showEditForm" id="beachDescriptionField">{{{ $beach['description']}}}</p>
-
             <div ng-show="showEditForm">
-
-
                 {{ Form::model($beach) }}
                 <div class="form-group">
                     {{ Form::textarea('description',null,array('class'=>'form-control','required'=>'true','id'=>'newDescription')) }}
@@ -22,22 +26,22 @@
                     {{ Form::button('Cancel', array('class'=>'btn btn', "ng-click"=>"editable()")) }}
                 </div>
                 {{ Form::close() }}
-
             </div>
 
             <p id="beachLastUpdateField" class="report">Last updated: {{ $beach['updated_at']}}</p>
         </div>
-
     </div>
     <div class="col-md-4">
         <ul class="nav nav-tabs" role="tablist">
-            <li class="active"><a href="#gallery" role="tab" data-toggle="tab">Image Gallery</a></li>
-            <li><a href="#utilities" role="tab" data-toggle="tab">Utilities</a></li>
+            <li class="active"><a href="/#gallery" role="tab" data-toggle="tab">Image Gallery</a></li>
+            <li><a href="/#utilities" role="tab" data-toggle="tab">Utilities</a></li>
             <li class="dropdown">
-                <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Reviews <span class="caret"></span></a>
+                <a href="/#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">Reviews <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
-                    <li><a href="#reviews" tabindex="-1" role="tab" data-toggle="tab">View</a></li>
-                    <li class=""><a href="#addreview" tabindex="-1" role="tab" data-toggle="tab">New</a></li>
+                    <li><a href="/#reviews" tabindex="-1" role="tab" data-toggle="tab">View</a></li>
+                    @if(Auth::check())
+                    <li class=""><a href="/#addreview" tabindex="-1" role="tab" data-toggle="tab">New</a></li>
+                    @endif
                 </ul>
             </li>
         </ul>
@@ -49,7 +53,7 @@
     <div class="row-fluid tab-pane fade in active" id="gallery">
         <div class="col-md-12 col-xs-12">        
             <div class="row">
-                <div class="col-md-9">    
+                <div class="col-md-7">    
                     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" ng-controller="imageController">
                         <!-- Indicators -->
                         <ol class="carousel-indicators">
@@ -66,7 +70,7 @@
                             <div class="item <?php if ($count == 1) echo "active" ?>">
                                 <img src="{{ $image['imagePath']}}" alt="...">
                                 <div class="carousel-caption  hidden-xs">
-                                    <p class="label label-primary">Uploaded on: {{ date_format(date_create($image['created_at']), 'd-m-Y')}}</p>
+                                    <p class="label label-info">Uploaded on: {{ date_format(date_create($image['created_at']), 'd-m-Y')}} by <a href='/profile/{{ $image['owner']['userid']}}'>{{ $image['owner']['name']}}</a> </p>
                                     <p class=""><a class="report label relabel-warning bringToTop" ng-click="reportImage({{ $image['id']}})" href="javascript:void(0)">Report image</a></p>
                                 </div>
                             </div>
@@ -74,51 +78,16 @@
                             @endforeach
                         </div>
                         <!-- Controls -->
-                        <!--                    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-                                              <span class="glyphicon glyphicon-chevron-left"></span>
-                                            </a>
-                                            <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-                                                <span class="glyphicon glyphicon-chevron-right"></span>
-                                            </a>-->
+                        <a class="left carousel-control" href="/#carousel-example-generic" role="button" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left"></span>
+                        </a>
+                        <a class="right carousel-control" href="/#carousel-example-generic" role="button" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                        </a>
                     </div>
                 </div>
-                <!-- Start of Carousel -->
-                <!--<div class="col-md-9 col-xs-12">-->
-                <!--                <div id="carousel-example-generic" class="carousel" data-ride="carousel" ng-controller="imageController"> 
-                                     Indicators 
-                                    <ol class="carousel-indicators">
-                <?php $count = 1; ?>
-                                      @foreach ($images as $image)
-                                            <li data-target="#carousel-example-generic" data-slide-to="0" <?php if ($count == 1) echo 'class="active"'; ?>></li>
-                <?php $count = 0; ?>
-                                      @endforeach
-                                    </ol>
-                
-                                     Wrapper for slides 
-                                    <div class="carousel-inner">
-                <?php $count = 1; ?>
-                                        @foreach ($images as $image)
-                                            <div class="item <?php if ($count == 1) echo "active" ?>" >
-                                                <img src="{{ $image['imagePath'] }}" alt="image_{{ $image['id'] }}">
-                                                <div class="carousel-caption  hidden-xs">
-                                                    <p class="label label-primary">Uploaded on: {{ date_format(date_create($image['created_at']), 'd-m-Y') }}</p>
-                                                    <p class=""><a class="report label relabel-warning bringToTop" ng-click="reportImage({{ $image['id'] }})" href="javascript:void(0)">Report image</a></p>
-                                                </div>
-                                            </div>
-                <?php $count = 0; ?>
-                                        @endforeach
-                                    </div>-->
 
-                <!-- Controls -->
-                <!--                    <a class="left carousel-control hidden-xs" href="#carousel-example-generic" role="button" data-slide="prev">
-                                      <span class="glyphicon glyphicon-chevron-left"></span>
-                                    </a>
-                                    <a class="right carousel-control  hidden-xs" href="#carousel-example-generic" role="button" data-slide="next">
-                                      <span class="glyphicon glyphicon-chevron-right"></span>
-                                    </a>
-                                </div>-->
-                <!--</div>-->
-                <!-- End of carousel -->
+                @if(Auth::check())
                 <div class="col-md-3 col-xs-12">
                     <br>
                     <div class="bringToTop col-md-12 col-xs-12">
@@ -145,6 +114,7 @@
                     </div>
 
                 </div>
+                @endif
             </div>
             <hr>
             <div class="row-fluid">
@@ -152,8 +122,8 @@
                 <div ng-controller="reviewController">
                     <div ng-repeat='review in reviews| orderBy:review.created_at | limitTo:4' class="col-md-3 col-xs-12">
                         <blockquote>
-                            <p><span class="glyphicon glyphicon-search"></span>&nbsp; %% review.title %% (Rate: %% review.rate %%)</p>
-                            <footer> %% review.text %%</footer> 
+                            <p><span class="glyphicon glyphicon-search"></span>&nbsp; %% review.text %%</p>
+                            <footer> <a href='/profile/%% review.owner.id %%' title="Profile">%% review.owner.name %%</a> (Rate: %% review.rate %%) </footer> 
                             <span><a class='report' ng-click="reportReview(review.id)" href="javascript:void(0)">%% review.reportStatus %%</a></span><span class="report">&nbsp;%% review.created_at %%</span>
                         </blockquote>
                     </div>
@@ -212,12 +182,10 @@
         <div ng-controller="reviewController">
             <div ng-repeat='review in reviews' class="col-md-12">
                 <blockquote>
-                    <p><span class="glyphicon glyphicon-search"></span>&nbsp; %% review.title %% (Rate: %% review.rate %%)</p>
-                    <footer> %% review.text %%</footer> 
-                    <footer> %% review.created_at %% </footer>
-                    <span><a class='report' href="/report/review/%% review.id %%">Report</a></span>
+                    <p><span class="glyphicon glyphicon-search"></span>&nbsp; %% review.text %%</p>
+                    <footer> <a href='/profile/%% review.owner.id %%' title="Profile">%% review.owner.name %%</a> (Rate: %% review.rate %%) </footer> 
+                    <span><a class='report' ng-click="reportReview(review.id)" href="javascript:void(0)">%% review.reportStatus %%</a></span><span class="report">&nbsp;%% review.created_at %%</span>
                 </blockquote>
-
             </div>
         </div>
     </div>
@@ -253,7 +221,6 @@
                     </label>
                 </div>
             </div>
-
             <div class="form-group">
                 {{ Form::label('hasShade','Natural Shade Available') }}&nbsp;&nbsp;&nbsp;
                 <div class="btn-group" data-toggle="buttons">
@@ -265,7 +232,6 @@
                     </label>
                 </div>
             </div>
-
             <div class="form-group">
                 {{ Form::label('hasRoadAccess','Accessed by road/car') }}&nbsp;&nbsp;&nbsp;
                 <div class="btn-group" data-toggle="buttons">
@@ -277,7 +243,6 @@
                     </label>
                 </div>
             </div>
-
             <div class="form-group">
                 {{ Form::label('hasSand','Sandy beach') }}&nbsp;&nbsp;&nbsp;
                 <div class="btn-group" data-toggle="buttons">
@@ -289,9 +254,7 @@
                     </label>
                 </div>
             </div>
-
         </div> 
-
         <div class="col-md-3 text-right">
             <div class="form-group">
                 {{ Form::label('hasParking','Parking Available') }}&nbsp;&nbsp;&nbsp;
@@ -328,15 +291,16 @@
                     </label>
                 </div>
             </div>
+            @if(Auth::check())
             <div class="form-group">
                 {{ Form::hidden ('beach_id',$utility[0]['beach_id'], array('required'=>'true')) }}
                 {{ Form::submit('Update utilities!', array('class'=>'btn btn-success')) }}
                 {{ Form::close() }}
             </div>
-
+            @endif
         </div>  
         <div class="col-md-3 text-left">
-            <p>In case you want to suggest additional options, <a href="/contact" title="Contact" >lets us know!</a></p>
+            <p>In case you want to suggest additional options, <a href="/contact" title="Contact" >let us know!</a></p>
         </div>
     </div> 
     <!--End of pane Utilities-->

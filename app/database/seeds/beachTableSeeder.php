@@ -13,8 +13,10 @@ class beachTableSeeder extends Seeder {
         
         for( $x=0 ; $x < $count; $x++ )
         {
+            $name = $faker->sentence(3);
             DB::table('beaches')->insert(array(
-                'name' => $faker->sentence(3),
+                'name' => $name,
+                'slug' => Str::slug($name),
                 'description' => $faker->sentence(50),
                 'latitude' => strval($faker->randomFloat(6, 35,42)), //'40.194100',
                 'longitude' => strval($faker->randomFloat(6, 20,26)),//'23.325849',
@@ -25,6 +27,7 @@ class beachTableSeeder extends Seeder {
                 //Dimos
                 'municipality_id'=> $faker->numberBetween(1,2) ,
                 'imagePath' => "fake",
+                'submitted_by'=>$faker->numberBetween(1, 3),
                 'created_at' => Date("Y-m-d H:i:s"),
                 'updated_at' => Date("Y-m-d H:i:s")
             ));

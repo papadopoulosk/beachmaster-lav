@@ -18,6 +18,7 @@ public function store(){
                 if ($path){
                     $image->beach_id = $bid;
                     $image->imagePath = $path;
+                    $image->submitted_by = Auth::id();
                     $image->save();
                 } else {
                     $error = true;

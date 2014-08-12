@@ -23,6 +23,10 @@ class beach extends Eloquent {
     public function images(){
         return $this->hasMany('images','beach_id');
     }
+    
+    public function owner(){
+        return $this->hasOne('user','id','submitted_by');
+    }
 
     public function validate($data){
         $rules = array(
@@ -30,14 +34,20 @@ class beach extends Eloquent {
                 'description' =>'required',
                 'latitude' =>'required',
                 'longitude' =>'required',
-                'imagePath' =>'required',
+//                'imagePath' =>'required',
                 'prefecture' =>'required',
                 'municipality' => 'required'
         );
         $validator = Validator::make($data,$rules);
-        return $validator->passes();
+        
+        if ($validator->passes()){
+            return true;
+        } else {
+            return $validator->messages();
+        }
     }
     
+    //Return the names of all beaches
     public function getNames(){
         $names = array();
         $temp = $this::select("id","name")->remember(15)->get()->toArray();
